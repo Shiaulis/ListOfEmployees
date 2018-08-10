@@ -14,11 +14,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Properties -
 
     private let window: UIWindow
+    private let applicationModel: ApplicationModel
 
     // MARK: - Initialization -
 
     override init() {
         self.window = UIWindow.init(frame: UIScreen.main.bounds)
+        self.applicationModel = ApplicationModel.init()
         super.init()
     }
 
@@ -26,6 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
 
+        applicationModel.startFetchingDataFromRemoteServerIfPossible()
         
         return true;
     }
