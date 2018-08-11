@@ -13,14 +13,14 @@ class EmployeesTableViewController: UITableViewController {
     // MARK: - Properties -
 
     private let dataProvider: DataProvider
-    fileprivate var employees: [Employee]
+    fileprivate var employees: [Character:[Employee]]
     var shouldUseCachedList: Bool
 
     // MARK: - Initialization -
 
     init(usingDataProvider dataProvider: DataProvider) {
         self.dataProvider = dataProvider
-        self.employees = []
+        self.employees = [:]
         self.shouldUseCachedList = false
         super.init(nibName: nil, bundle: nil)
         NSLog("TEST: created view controller")
@@ -34,101 +34,78 @@ class EmployeesTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        dataProvider.setDataProviderDelegate(delegate: self)
-        dataProvider.requestCachedList()
         shouldUseCachedList = true
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        employees = dataProvider.sortedEmployees
+        NotificationCenter.default.addObserver(self, selector: #selector(didUpdateEmployeesAction), name: .didUpdateEmployees, object: nil)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        NotificationCenter.default.removeObserver(self, name: .didUpdateEmployees, object: nil)
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        return employees.keys.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return employees.count
+        return employeesArray(forSection: section)?.count ?? 0
     }
 
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "reuseIdentifier")
+        guard let employee = employee(forIndexPath: indexPath) else {
+            assertionFailure()
+            return cell
+        }
 
-        cell.textLabel?.text = employees[indexPath.row].firstName
-        cell.detailTextLabel?.text = employees[indexPath.row].lastName
-
-
+        cell.textLabel?.text = employee.firstName
+        cell.detailTextLabel?.text = employee.lastName
         return cell
     }
 
+    // MARK: - Private methods -
 
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
-}
-
-extension EmployeesTableViewController: DataProviderDelegate {
-    func cachedEmployeesList(error: Error?, cachedList: [Employee]?) {
-
-        // FIXME: Check for error
-        if shouldUseCachedList, let cachedEmployees = cachedList {
-            employees = cachedEmployees
-            NSLog("TEST: Received cached data")
-            self.tableView.reloadData()
+    @objc private func didUpdateEmployeesAction() {
+        employees = dataProvider.sortedEmployees
+        DispatchQueue.main.async { [weak self] in
+            self?.tableView.reloadData()
         }
     }
 
-    func remoteEmployeesList(error: Error?, remoteList: [Employee]?) {
-        // FIXME: Check for error
-        if let remoteEmployees = remoteList {
-            shouldUseCachedList = false
-            employees = remoteEmployees
-            NSLog("TEST: Received remote data")
-            self.tableView.reloadData()
+    private func employeesArray(forSection section: Int) -> [Employee]? {
+        let sortedKeysArray = employees.keys.sorted()
+        if sortedKeysArray.count <= section {
+            assertionFailure()
+            return nil
         }
+        let targetKey = sortedKeysArray[section]
+        guard let targetSectionArray = employees[targetKey] else {
+            assertionFailure()
+            return nil
+        }
+        return targetSectionArray
+    }
+
+    private func employee(forIndexPath indexPath: IndexPath) -> Employee? {
+        guard let employeesForSection = employeesArray(forSection: indexPath.section) else {
+            assertionFailure()
+            return nil
+        }
+
+        guard employeesForSection.count > indexPath.row else {
+            assertionFailure()
+            return nil
+        }
+        return employeesForSection[indexPath.row]
     }
 }

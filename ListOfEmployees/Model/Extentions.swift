@@ -18,3 +18,7 @@ extension OSLog {
         self.init(subsystem: subsystem.rawValue, category: String(describing: object))
     }
 }
+
+extension Notification.Name {
+    static let didUpdateEmployees = Notification.Name.init("DidUpdateEmployees")
+}

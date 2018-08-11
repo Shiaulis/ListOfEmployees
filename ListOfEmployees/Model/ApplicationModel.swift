@@ -10,15 +10,11 @@ import Foundation
 import os.log
 
 protocol DataProvider {
-    func updateDataFromRemoteServer()
-    func setDataProviderDelegate(delegate: DataProviderDelegate)
-    func requestCachedList()
+    var sortedEmployees:[Character: [Employee]] { get }
+    func updateData()
 }
 
-protocol DataProviderDelegate: class {
-    func cachedEmployeesList(error: Error?, cachedList: [Employee]?)
-    func remoteEmployeesList(error: Error?, remoteList: [Employee]?)
-}
+
 
 class ApplicationModel {
 
@@ -30,15 +26,23 @@ class ApplicationModel {
     ["http://tallinn.jobapp.aw.ee/employee_list",
      "http://tartu.jobapp.aw.ee/employee_list"]
 
+
     static private let cacheFileName = "cachedData"
     fileprivate static let logger = OSLog.init(subsystem: LogSubsystem.applicationModel, object: ApplicationModel.self)
 
     // MARK: Private properties
 
-    weak var dataProviderDelegate: DataProviderDelegate?
     private let jsonParser: JsonParser
     private let remoteDataFetcher: RemoteDataFetcher
     private let persistentCacheStorage: PersistentCacheStorage?
+    private let notificationCenter: NotificationCenter
+    fileprivate var employeesSortedArray: [Employee] {
+        didSet {
+            notificationCenter.post(name: .didUpdateEmployees, object: self)
+        }
+    }
+    fileprivate let employeesReadWriteQueue: DispatchQueue
+
 
     // MARK: - Initialization -
 
@@ -52,6 +56,9 @@ class ApplicationModel {
             os_log("Failed to initiate cache. Error '%@'", log: ApplicationModel.logger, type: .error, error.localizedDescription)
             self.persistentCacheStorage = nil
         }
+        self.notificationCenter = NotificationCenter.default
+        self.employeesReadWriteQueue = DispatchQueue.global(qos: .userInteractive)
+        self.employeesSortedArray = []
     }
 
     // MARK: - Public methods -
@@ -74,6 +81,10 @@ class ApplicationModel {
         }
     }
 
+    func restoreDataFromPersistentStorage() {
+        persistentCacheStorage?.startReadingCacheData()
+    }
+
     // MARK: - Private methods -
 
     private func createURLsForRemoteDataFetching() throws -> [URL] {
@@ -85,14 +96,44 @@ class ApplicationModel {
         }
         return urls
     }
+
+    /**
+     This method expects sorted array as input parameter.
+     Otherwise every value in this dictionary should be sorted afterwords.
+     */
+    private static func convertEmployeesSortedArrayToSortedDictionary(employeesSortedArray:[Employee]) -> [Character:[Employee]] {
+        var dictionary:[Character:[Employee]] = [:]
+        for employee in employeesSortedArray {
+            guard let lastName = employee.lastName, let letter = lastName.first else {
+                assertionFailure()
+                continue
+            }
+
+            if dictionary[letter] != nil {
+                dictionary[letter]?.append(employee)
+            }
+            else {
+                dictionary[letter] = [employee]
+            }
+        }
+        return dictionary
+    }
 }
 
 extension ApplicationModel: RemoteDataFetcherDelegate {
     func remoteDataFetchRequestSuccess(datas: [Data], responses: [URLResponse]) {
         os_log("Remote data fetched succesfully", log: ApplicationModel.logger, type: .default)
         jsonParser.parse(datas: datas) { [weak self] (error, employees) in
-            self?.persistentCacheStorage?.cache(datas: datas)
-            self?.dataProviderDelegate?.remoteEmployeesList(error: error, remoteList: employees)
+            guard let strongSelf = self else {
+                assertionFailure()
+                return
+            }
+            strongSelf.persistentCacheStorage?.cache(datas: datas)
+            guard let employeesArray = employees else {
+                assertionFailure()
+                return
+            }
+            strongSelf.employeesSortedArray = employeesArray.sorted()
         }
     }
 
@@ -121,7 +162,13 @@ extension ApplicationModel: PersistentCacheStorageDelegate {
     func cachedDataIsReadedSuccessfully(datas: [Data]) {
         os_log("Data read from cache successfully", log: ApplicationModel.logger, type: .default)
         jsonParser.parse(datas: datas) { [weak self] (error, employees) in
-            self?.dataProviderDelegate?.cachedEmployeesList(error: error, cachedList: employees)
+            guard let employeesArray = employees else {
+                os_log("Failed to get employees from cached data", log: ApplicationModel.logger, type: .error)
+                return
+            }
+            self?.employeesReadWriteQueue.async(flags: .barrier) { [weak self] in
+                self?.employeesSortedArray = employeesArray.sorted()
+            }
         }
     }
 
@@ -134,15 +181,13 @@ extension ApplicationModel: PersistentCacheStorageDelegate {
 }
 
 extension ApplicationModel: DataProvider {
-    func requestCachedList() {
-        persistentCacheStorage?.startReadingCacheData()
+    var sortedEmployees: [Character : [Employee]] {
+        return employeesReadWriteQueue.sync {
+            return ApplicationModel.convertEmployeesSortedArrayToSortedDictionary(employeesSortedArray: self.employeesSortedArray)
+        }
     }
 
-    func setDataProviderDelegate(delegate: DataProviderDelegate) {
-        dataProviderDelegate = delegate
-    }
-
-    func updateDataFromRemoteServer() {
+    func updateData() {
         startFetchingRemoteData()
     }
 }

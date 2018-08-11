@@ -18,7 +18,7 @@ protocol PersistentCacheStorageDelegate: class {
 
 class PersistentCacheStorage {
 
-    // MARK: - Properties -
+    // MARK: - Properties -z
     weak var delegate: PersistentCacheStorageDelegate?
     private let dispatchQueue: DispatchQueue
     private let systemFileManager: FileManager

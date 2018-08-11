@@ -32,6 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         applicationModel.setup()
         applicationModel.startFetchingRemoteData()
+        applicationModel.restoreDataFromPersistentStorage()
         
         return true;
     }

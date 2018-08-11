@@ -65,6 +65,31 @@ struct Employee: Decodable {
     }
 }
 
+extension Employee: Comparable {
+    static func < (lhs: Employee, rhs: Employee) -> Bool {
+
+        guard let leftLastName = lhs.lastName, let rightLastName = rhs.lastName else {
+            return lhs.lastName == nil && rhs.lastName == nil
+        }
+
+        if leftLastName != rightLastName {
+            return leftLastName < rightLastName
+        }
+
+        guard let leftFirstName = lhs.firstName, let rightFirstName = rhs.firstName else {
+            return lhs.firstName == nil && rhs.firstName == nil
+        }
+
+        return leftFirstName < rightFirstName
+    }
+}
+
+extension Employee: Equatable {
+    static func == (lhs: Employee, rhs: Employee) -> Bool {
+        return lhs.firstName == rhs.firstName
+    }
+}
+
 enum EmployeePosition: String, Decodable {
     case ios = "IOS"
     case pm = "PM"
