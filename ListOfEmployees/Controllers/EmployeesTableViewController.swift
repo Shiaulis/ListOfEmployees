@@ -12,16 +12,18 @@ class EmployeesTableViewController: UITableViewController {
 
     // MARK: - Properties -
 
+    private static let cellId = "EmployeesTableViewControllerCellId"
+
     private let dataProvider: DataProvider
     fileprivate var employees: [Character:[Employee]]
-    var shouldUseCachedList: Bool
+
+
 
     // MARK: - Initialization -
 
     init(usingDataProvider dataProvider: DataProvider) {
         self.dataProvider = dataProvider
         self.employees = [:]
-        self.shouldUseCachedList = false
         super.init(nibName: nil, bundle: nil)
         NSLog("TEST: created view controller")
     }
@@ -34,8 +36,7 @@ class EmployeesTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        shouldUseCachedList = true
-        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
+//        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: EmployeesTableViewController.cellId)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -49,10 +50,9 @@ class EmployeesTableViewController: UITableViewController {
         NotificationCenter.default.removeObserver(self, name: .didUpdateEmployees, object: nil)
     }
 
-    // MARK: - Table view data source
+    // MARK: - Table view data source -
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return employees.keys.count
     }
 
