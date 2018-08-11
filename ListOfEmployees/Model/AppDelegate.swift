@@ -20,6 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Initialization -
 
     override init() {
+        NSLog("TEST: App started")
         self.window = UIWindow.init(frame: UIScreen.main.bounds)
         self.applicationModel = ApplicationModel.init()
         super.init()
@@ -31,13 +32,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         applicationModel.setup()
         applicationModel.startFetchingRemoteData()
-
         
         return true;
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
 
+        let employeesTableViewController = EmployeesTableViewController.init(usingDataProvider: applicationModel)
+        let navigationController = UINavigationController.init(rootViewController: employeesTableViewController)
+        window.rootViewController = navigationController
+        window.makeKeyAndVisible()
+        
         return true
     }
 }

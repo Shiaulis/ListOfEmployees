@@ -8,15 +8,15 @@
 
 import Foundation
 
-struct Employee {
-
-    // MARK: - Properties -
-
-
-
-    // MARK: - Initialization -
-
-    init() {
-
-    }
-}
+//struct Employee {
+//
+//    // MARK: - Properties -
+//
+//
+//
+//    // MARK: - Initialization -
+//
+//    init() {
+//
+//    }
+//}

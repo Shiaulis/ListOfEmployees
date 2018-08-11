@@ -8,16 +8,10 @@
 
 import Foundation
 
-protocol JsonParserDelegate: class {
-    func parsingFinishedSuccessfully(employees: [EmployeeCodable], initialDatas: [Data])
-    func parsingFinishedWithError(error: Error)
-}
-
 class JsonParser {
 
     // MARK: - Properties -
 
-    weak var delegate: JsonParserDelegate?
     private let dispatchQueue: DispatchQueue
     private let decoder: JSONDecoder
 
@@ -28,7 +22,7 @@ class JsonParser {
         self.decoder = JSONDecoder.init()
     }
 
-    func parse(datas: [Data]) {
+    func parse(datas: [Data], completionHandler:@escaping (Error?, [Employee]?) -> Void) {
         dispatchQueue.async { [weak self] in
             guard let strongSelf = self else {
                 assertionFailure()
@@ -36,26 +30,26 @@ class JsonParser {
             }
 
             do {
-                var employees: [EmployeeCodable] = []
+                var employees: [Employee] = []
                 for data in datas {
                     let parsedEmployees = try strongSelf.decoder.decode(EmployeesCodable.self, from: data).employees
                     employees.append(contentsOf: parsedEmployees)
                 }
 
-                strongSelf.delegate?.parsingFinishedSuccessfully(employees: employees, initialDatas: datas)
+                completionHandler(nil, employees)
             }
             catch {
-                // FIXME: catch error
+                completionHandler(error, nil)
             }
         }
     }
 }
 
 struct EmployeesCodable: Decodable {
-    let employees: [EmployeeCodable]
+    let employees: [Employee]
 }
 
-struct EmployeeCodable: Decodable {
+struct Employee: Decodable {
     let firstName: String?
     let lastName: String?
     let position: EmployeePosition?

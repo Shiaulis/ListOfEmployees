@@ -17,6 +17,7 @@
 		0904F247211E3A2100A7B8B0 /* PersistentCacheStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F246211E3A2100A7B8B0 /* PersistentCacheStorage.swift */; };
 		0904F249211ECD7600A7B8B0 /* Extentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F248211ECD7600A7B8B0 /* Extentions.swift */; };
 		0904F24B211ECE7D00A7B8B0 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F24A211ECE7D00A7B8B0 /* Errors.swift */; };
+		0904F24D211F184900A7B8B0 /* EmployeesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F24C211F184900A7B8B0 /* EmployeesTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		0904F246211E3A2100A7B8B0 /* PersistentCacheStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentCacheStorage.swift; sourceTree = "<group>"; };
 		0904F248211ECD7600A7B8B0 /* Extentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extentions.swift; sourceTree = "<group>"; };
 		0904F24A211ECE7D00A7B8B0 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		0904F24C211F184900A7B8B0 /* EmployeesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeesTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +109,7 @@
 		0904F217211DEFF900A7B8B0 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				0904F24C211F184900A7B8B0 /* EmployeesTableViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -187,6 +190,7 @@
 				0904F202211DD79A00A7B8B0 /* AppDelegate.swift in Sources */,
 				0904F24B211ECE7D00A7B8B0 /* Errors.swift in Sources */,
 				0904F221211DF20700A7B8B0 /* Employee.swift in Sources */,
+				0904F24D211F184900A7B8B0 /* EmployeesTableViewController.swift in Sources */,
 				0904F21D211DF0EB00A7B8B0 /* JsonParser.swift in Sources */,
 				0904F249211ECD7600A7B8B0 /* Extentions.swift in Sources */,
 			);
