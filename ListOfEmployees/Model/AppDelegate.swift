@@ -15,6 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private let window: UIWindow
     private let applicationModel: ApplicationModel
+    
 
     // MARK: - Initialization -
 
@@ -28,7 +29,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
 
+        applicationModel.setup()
         applicationModel.startFetchingDataFromRemoteServerIfPossible()
+
         
         return true;
     }
