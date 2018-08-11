@@ -58,6 +58,7 @@ class RemoteDataFetcher: NSObject {
         dispatchQueue.sync { [weak self] in
             guard let strongSelf = self else {
                 assertionFailure()
+                dispatchGroup.leave()
                 return
             }
 
@@ -67,17 +68,20 @@ class RemoteDataFetcher: NSObject {
                        type: .debug,
                        response?.url?.path ?? "", error.localizedDescription)
                 strongSelf.errors.append(error)
+                dispatchGroup.leave()
                 return
             }
 
             guard let data = data else {
                 assertionFailure("Data expected to exist")
+                dispatchGroup.leave()
                 return
             }
 
 
             guard let response = response else {
                 assertionFailure("Response expected to exist")
+                dispatchGroup.leave()
                 return
             }
 
