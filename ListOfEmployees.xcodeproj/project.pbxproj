@@ -16,6 +16,7 @@
 		0904F221211DF20700A7B8B0 /* Employee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F220211DF20700A7B8B0 /* Employee.swift */; };
 		0904F247211E3A2100A7B8B0 /* PersistentStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F246211E3A2100A7B8B0 /* PersistentStorage.swift */; };
 		0904F249211ECD7600A7B8B0 /* Extentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F248211ECD7600A7B8B0 /* Extentions.swift */; };
+		0904F24B211ECE7D00A7B8B0 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F24A211ECE7D00A7B8B0 /* Errors.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		0904F220211DF20700A7B8B0 /* Employee.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Employee.swift; sourceTree = "<group>"; };
 		0904F246211E3A2100A7B8B0 /* PersistentStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentStorage.swift; sourceTree = "<group>"; };
 		0904F248211ECD7600A7B8B0 /* Extentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extentions.swift; sourceTree = "<group>"; };
+		0904F24A211ECE7D00A7B8B0 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +92,7 @@
 				0904F220211DF20700A7B8B0 /* Employee.swift */,
 				0904F246211E3A2100A7B8B0 /* PersistentStorage.swift */,
 				0904F248211ECD7600A7B8B0 /* Extentions.swift */,
+				0904F24A211ECE7D00A7B8B0 /* Errors.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -182,6 +185,7 @@
 				0904F219211DF05A00A7B8B0 /* ApplicationModel.swift in Sources */,
 				0904F21F211DF1E900A7B8B0 /* RemoteDataFether.swift in Sources */,
 				0904F202211DD79A00A7B8B0 /* AppDelegate.swift in Sources */,
+				0904F24B211ECE7D00A7B8B0 /* Errors.swift in Sources */,
 				0904F221211DF20700A7B8B0 /* Employee.swift in Sources */,
 				0904F21D211DF0EB00A7B8B0 /* JsonParser.swift in Sources */,
 				0904F249211ECD7600A7B8B0 /* Extentions.swift in Sources */,

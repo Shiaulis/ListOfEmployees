@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os.log
 
 class ApplicationModel {
 
@@ -19,7 +20,7 @@ class ApplicationModel {
      "http://tartu.jobapp.aw.ee/employee_list"]
 
     static private let cacheFileName = "cachedData"
-    
+    fileprivate static let logger = OSLog.init(subsystem: LogSubsystem.applicationModel, object: ApplicationModel.self)
 
     // MARK: Private properties
 
@@ -31,8 +32,7 @@ class ApplicationModel {
 
     init() {
         self.jsonParser = JsonParser.init(dispatchQueue: DispatchQueue.global(qos: .userInitiated))
-        self.remoteDataFetcher = RemoteDataFetcher.init(with: URLSession.shared,
-                                                        dispatchQueue: DispatchQueue.global(qos: .userInitiated))
+        self.remoteDataFetcher = RemoteDataFetcher.init(dispatchQueue: DispatchQueue.global(qos: .userInitiated))
         self.persistentStorage = PersistentStorage.init(dispatchQueue: DispatchQueue.global(qos: .background))
     }
 
@@ -44,30 +44,51 @@ class ApplicationModel {
     }
 
     func startFetchingDataFromRemoteServerIfPossible() {
-        for urlString in ApplicationModel.dataURLStringsArray {
-            guard let url = URL.init(string: urlString) else {
-                assertionFailure("Failed to construct url from string \(urlString)")
-                // FIXME: Create some error, implement and call some error handler
-                return
-            }
 
-            remoteDataFetcher.startFetchData(from: url)
+
+        do {
+            let urls: [URL] = try createURLsForRemoteDataFetching()
+            remoteDataFetcher.startFetchData(from: urls)
         }
+        catch {
+            os_log("Failed to start fetching data. Error: '%@'",
+                   log: ApplicationModel.logger,
+                   type: .error,
+                   error.localizedDescription)
+        }
+    }
+
+    private func createURLsForRemoteDataFetching() throws -> [URL] {
+        let urls = try ApplicationModel.dataURLStringsArray.map { (urlString) -> URL in
+            guard let url = URL.init(string: urlString) else {
+                throw ApplicationModelError.stringToURLConvertError(urlString)
+            }
+            return url
+        }
+        return urls
     }
 }
 
 extension ApplicationModel: RemoteDataFetcherDelegate {
-    func remoteDataFetchRequestSuccess(data: Data, response: URLResponse) {
-        jsonParser.parse(data: data)
-    }
-
-    func remoteDataFetchRequestFailed(error: Error) {
+    func remoteDataFetchRequestSuccess(datas: [Data], responses: [URLResponse]) {
+        os_log("Remote data fetched succesfully", log: ApplicationModel.logger, type: .default)
 
     }
+
+    func remoteDataFetchRequestFailed(errors: [Error]) {
+        for error in errors {
+            os_log("Failed to fetch remote data. Error '%@'",
+                   log: ApplicationModel.logger,
+                   type: .error,
+                   error.localizedDescription)
+        }
+    }
+
 }
 
 extension ApplicationModel: JsonParserDelegate {
     func parsingFinishedSuccessfully(employees: [EmployeeCodable], initialData data: Data) {
+        os_log("Data parsed successfully", log: ApplicationModel.logger, type: .default)
         persistentStorage?.cache(data: data, withName: ApplicationModel.cacheFileName)
     }
 
