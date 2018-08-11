@@ -1,1 +1,2 @@
 * I didn't remove duplicates from the list because there are no such request but if I should, I probably should choose some unique identifier for every unique employee, such as corporate email address.
+* It's funny that I'd thought the data at links is static. But after 20 minutes of debugging I've realized that the data is dynamic :)
