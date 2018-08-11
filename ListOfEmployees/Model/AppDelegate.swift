@@ -30,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
 
         applicationModel.setup()
-        applicationModel.startFetchingDataFromRemoteServerIfPossible()
+        applicationModel.startFetchingRemoteData()
 
         
         return true;

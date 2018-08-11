@@ -26,14 +26,20 @@ class ApplicationModel {
 
     private let jsonParser: JsonParser
     private let remoteDataFetcher: RemoteDataFetcher
-    private let persistentStorage: PersistentStorage?
+    private let persistentCacheStorage: PersistentCacheStorage?
 
     // MARK: - Initialization -
 
     init() {
         self.jsonParser = JsonParser.init(dispatchQueue: DispatchQueue.global(qos: .userInitiated))
         self.remoteDataFetcher = RemoteDataFetcher.init(dispatchQueue: DispatchQueue.global(qos: .userInitiated))
-        self.persistentStorage = PersistentStorage.init(dispatchQueue: DispatchQueue.global(qos: .background))
+        do {
+            self.persistentCacheStorage = try PersistentCacheStorage.init(directoryName: "UsersDataCache", dispatchQueue: DispatchQueue.global(qos: .background))
+        }
+        catch {
+            os_log("Failed to initiate cache. Error '%@'", log: ApplicationModel.logger, type: .error, error.localizedDescription)
+            self.persistentCacheStorage = nil
+        }
     }
 
     // MARK: - Public methods -
@@ -41,11 +47,10 @@ class ApplicationModel {
     func setup()  {
         remoteDataFetcher.delegate = self
         jsonParser.delegate = self
+        persistentCacheStorage?.delegate = self
     }
 
-    func startFetchingDataFromRemoteServerIfPossible() {
-
-
+    func startFetchingRemoteData() {
         do {
             let urls: [URL] = try createURLsForRemoteDataFetching()
             remoteDataFetcher.startFetchData(from: urls)
@@ -72,7 +77,7 @@ class ApplicationModel {
 extension ApplicationModel: RemoteDataFetcherDelegate {
     func remoteDataFetchRequestSuccess(datas: [Data], responses: [URLResponse]) {
         os_log("Remote data fetched succesfully", log: ApplicationModel.logger, type: .default)
-
+        jsonParser.parse(datas: datas)
     }
 
     func remoteDataFetchRequestFailed(errors: [Error]) {
@@ -87,12 +92,39 @@ extension ApplicationModel: RemoteDataFetcherDelegate {
 }
 
 extension ApplicationModel: JsonParserDelegate {
-    func parsingFinishedSuccessfully(employees: [EmployeeCodable], initialData data: Data) {
+    func parsingFinishedSuccessfully(employees: [EmployeeCodable], initialDatas datas: [Data]) {
         os_log("Data parsed successfully", log: ApplicationModel.logger, type: .default)
-        persistentStorage?.cache(data: data, withName: ApplicationModel.cacheFileName)
+        persistentCacheStorage?.cache(datas: datas)
     }
 
     func parsingFinishedWithError(error: Error) {
+        os_log("Failed to parse data. Error '%@'",
+               log: ApplicationModel.logger,
+               type: .error,
+               error.localizedDescription)
+    }
+}
 
+extension ApplicationModel: PersistentCacheStorageDelegate {
+    func cachingDataSucceeded() {
+        os_log("Data cached successfully", log: ApplicationModel.logger, type: .default)
+    }
+
+    func cachingDataFailed(withError error: Error?) {
+        os_log("Failed to cache data. Error '%@'",
+               log: ApplicationModel.logger,
+               type: .error,
+               error?.localizedDescription ?? "")
+    }
+
+    func cachedDataIsReadedSuccessfully(datas: [Data]) {
+        os_log("Data read from cache successfully", log: ApplicationModel.logger, type: .default)
+    }
+
+    func cachedDataReadingFailed(withError error: Error?) {
+        os_log("Failed to read data from cache. Error '%@'",
+               log: ApplicationModel.logger,
+               type: .error,
+               error?.localizedDescription ?? "")
     }
 }

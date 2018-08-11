@@ -23,3 +23,7 @@ extension ApplicationModelError: LocalizedError {
         }
     }
 }
+
+enum PersistentCacheStorageError: Error {
+    case createCacheDirectoryURLError
+}

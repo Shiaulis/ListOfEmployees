@@ -123,7 +123,6 @@ class RemoteDataFetcher: NSObject {
             }
 
             strongSelf.delegate?.remoteDataFetchRequestSuccess(datas: strongSelf.datas, responses: strongSelf.responses)
-
         }
     }
 }
