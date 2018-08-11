@@ -86,6 +86,9 @@ extension Employee: Comparable {
 
 extension Employee: Equatable {
     static func == (lhs: Employee, rhs: Employee) -> Bool {
+        if lhs.lastName != rhs.lastName {
+            return lhs.lastName == rhs.lastName
+        }
         return lhs.firstName == rhs.firstName
     }
 }
