@@ -16,6 +16,9 @@ import Contacts
 protocol DataProvider {
     var sortedEmployees:[Character: [Employee]] { get }
     func updateData()
+    func fetchContact(forIdentifier: String,
+                      keyDescriptor: CNKeyDescriptor,
+                      completionHandler:@escaping (CNContact?)->Void)
 }
 
 
@@ -150,9 +153,18 @@ class ApplicationModel {
 
             os_log("Access to contacts granted by user", log: ApplicationModel.logger, type: .debug)
 
+            guard let strongSelf = self else {
+                assertionFailure()
+                return
+            }
             // We save the property only if acess to contacts is granted by the user
-            self?.contactsStore = contactsStore
+            strongSelf.contactsStore = contactsStore
+            strongSelf.notificationCenter.addObserver(strongSelf, selector: #selector(strongSelf.contactsStoreDidChange), name: Notification.Name.CNContactStoreDidChange, object: nil)
         }
+    }
+
+    @objc private func contactsStoreDidChange() {
+        persistentCacheStorage?.startReadingCacheData()
     }
 }
 
@@ -217,6 +229,18 @@ extension ApplicationModel: PersistentCacheStorageDelegate {
 }
 
 extension ApplicationModel: DataProvider {
+    func fetchContact(forIdentifier identifier: String, keyDescriptor: CNKeyDescriptor, completionHandler: @escaping (CNContact?) -> Void) {
+        if let contactsStore = contactsStore {
+            dataMapper.contact(forIdentifier: identifier, contactsStore: contactsStore, keyDescriptor: keyDescriptor, completionHandler: completionHandler)
+
+        }
+        else {
+            os_log("Failed to get contact for identifier due to absense of contacts store", log: ApplicationModel.logger, type: .error)
+            completionHandler(nil)
+        }
+    }
+
+    
     var sortedEmployees: [Character : [Employee]] {
         return employeesReadWriteQueue.sync {
             return ApplicationModel.convertEmployeesSortedArrayToSortedDictionary(employeesSortedArray: self.employeesSortedArray)

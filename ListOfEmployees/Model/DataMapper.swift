@@ -52,6 +52,19 @@ class DataMapper {
         }
     }
 
+    func contact(forIdentifier identifier: String, contactsStore:CNContactStore, keyDescriptor: CNKeyDescriptor, completionHandler:@escaping (CNContact?)->Void) {
+        queue.async {
+            do {
+                let contact = try contactsStore.unifiedContact(withIdentifier: identifier, keysToFetch: [keyDescriptor])
+                completionHandler(contact)
+            }
+            catch {
+                os_log("Failed to find contact card. Error '%@'", log: DataMapper.logger, type: .error, error.localizedDescription)
+                completionHandler(nil)
+            }
+        }
+    }
+
     private func employeesWithFilledContactsIdentifiers(from employees: [Employee], contactsStore: CNContactStore) -> [Employee] {
         var mutatedEmployees = employees;
         do {

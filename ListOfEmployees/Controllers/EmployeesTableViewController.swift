@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import ContactsUI
 
 class EmployeesTableViewController: UITableViewController {
 
@@ -163,9 +164,22 @@ extension EmployeesTableViewController: EmployeeTableViewCellDelegate {
             return
         }
 
-        let employee = getEmployee(forIndexPath: tappedIndexPath)
-        print("Contact card should open for \(employee)")
+        guard let employee = getEmployee(forIndexPath: tappedIndexPath),
+            let identifier = employee.contactsCardIdentifier else {
+                assertionFailure()
+                return
+        }
+        dataProvider.fetchContact(forIdentifier: identifier, keyDescriptor: CNContactViewController.descriptorForRequiredKeys()) { (contact) in
+            guard let contact = contact else {
+                assertionFailure()
+                return
+            }
+            DispatchQueue.main.async {
+                let viewController = ContactCardViewController.init(for: contact)
+                let navigationController = UINavigationController.init(rootViewController: viewController)
+
+                self.present(navigationController, animated: true, completion: nil)
+            }
+        }
     }
-
-
 }
