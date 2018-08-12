@@ -11,7 +11,7 @@
 		0904F209211DD79B00A7B8B0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0904F208211DD79B00A7B8B0 /* Assets.xcassets */; };
 		0904F20C211DD79B00A7B8B0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0904F20A211DD79B00A7B8B0 /* LaunchScreen.storyboard */; };
 		0904F219211DF05A00A7B8B0 /* ApplicationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F218211DF05A00A7B8B0 /* ApplicationModel.swift */; };
-		0904F21D211DF0EB00A7B8B0 /* JsonParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F21C211DF0EB00A7B8B0 /* JsonParser.swift */; };
+		0904F21D211DF0EB00A7B8B0 /* DataMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F21C211DF0EB00A7B8B0 /* DataMapper.swift */; };
 		0904F21F211DF1E900A7B8B0 /* RemoteDataFether.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F21E211DF1E900A7B8B0 /* RemoteDataFether.swift */; };
 		0904F221211DF20700A7B8B0 /* Employee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F220211DF20700A7B8B0 /* Employee.swift */; };
 		0904F247211E3A2100A7B8B0 /* PersistentCacheStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F246211E3A2100A7B8B0 /* PersistentCacheStorage.swift */; };
@@ -28,7 +28,7 @@
 		0904F20B211DD79B00A7B8B0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0904F20D211DD79B00A7B8B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "ListOfEmployees/Supporting Files/Info.plist"; sourceTree = SOURCE_ROOT; };
 		0904F218211DF05A00A7B8B0 /* ApplicationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationModel.swift; sourceTree = "<group>"; };
-		0904F21C211DF0EB00A7B8B0 /* JsonParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonParser.swift; sourceTree = "<group>"; };
+		0904F21C211DF0EB00A7B8B0 /* DataMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataMapper.swift; sourceTree = "<group>"; };
 		0904F21E211DF1E900A7B8B0 /* RemoteDataFether.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataFether.swift; sourceTree = "<group>"; };
 		0904F220211DF20700A7B8B0 /* Employee.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Employee.swift; sourceTree = "<group>"; };
 		0904F246211E3A2100A7B8B0 /* PersistentCacheStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentCacheStorage.swift; sourceTree = "<group>"; };
@@ -91,7 +91,7 @@
 			children = (
 				0904F201211DD79A00A7B8B0 /* AppDelegate.swift */,
 				0904F218211DF05A00A7B8B0 /* ApplicationModel.swift */,
-				0904F21C211DF0EB00A7B8B0 /* JsonParser.swift */,
+				0904F21C211DF0EB00A7B8B0 /* DataMapper.swift */,
 				0904F21E211DF1E900A7B8B0 /* RemoteDataFether.swift */,
 				0904F220211DF20700A7B8B0 /* Employee.swift */,
 				0904F246211E3A2100A7B8B0 /* PersistentCacheStorage.swift */,
@@ -195,7 +195,7 @@
 				0904F24B211ECE7D00A7B8B0 /* Errors.swift in Sources */,
 				0904F221211DF20700A7B8B0 /* Employee.swift in Sources */,
 				0904F24D211F184900A7B8B0 /* EmployeesTableViewController.swift in Sources */,
-				0904F21D211DF0EB00A7B8B0 /* JsonParser.swift in Sources */,
+				0904F21D211DF0EB00A7B8B0 /* DataMapper.swift in Sources */,
 				0904F249211ECD7600A7B8B0 /* Extentions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

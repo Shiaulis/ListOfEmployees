@@ -27,8 +27,8 @@ class RemoteDataFetcher: NSObject {
 
     // MARK: - Initialization -
 
-    init(dispatchQueue: DispatchQueue) {
-        self.dispatchQueue = dispatchQueue
+    init(queue: DispatchQueue) {
+        self.dispatchQueue = queue
         datas = []
         responses = []
         errors = []

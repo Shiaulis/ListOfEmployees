@@ -8,7 +8,11 @@
 
 import Foundation
 import os.log
+import Contacts
 
+/**
+    Protocol describes an interface from model to UI
+*/
 protocol DataProvider {
     var sortedEmployees:[Character: [Employee]] { get }
     func updateData()
@@ -26,38 +30,49 @@ class ApplicationModel {
     ["http://tallinn.jobapp.aw.ee/employee_list",
      "http://tartu.jobapp.aw.ee/employee_list"]
 
-
-    static private let cacheFileName = "cachedData"
     fileprivate static let logger = OSLog.init(subsystem: LogSubsystem.applicationModel, object: ApplicationModel.self)
 
     // MARK: Private properties
+    // Services
+    fileprivate let userInitiatedConcurrentQueue: DispatchQueue
+    fileprivate let employeesReadWriteQueue: DispatchQueue
 
-    private let jsonParser: JsonParser
     private let remoteDataFetcher: RemoteDataFetcher
     private let persistentCacheStorage: PersistentCacheStorage?
+    private let dataMapper: DataMapper
     private let notificationCenter: NotificationCenter
+    private var contactsStore: CNContactStore?
+    // Data
     fileprivate var employeesSortedArray: [Employee] {
         didSet {
             notificationCenter.post(name: .didUpdateEmployees, object: self)
         }
     }
-    fileprivate let employeesReadWriteQueue: DispatchQueue
-
 
     // MARK: - Initialization -
 
     init() {
-        self.jsonParser = JsonParser.init(dispatchQueue: DispatchQueue.global(qos: .userInitiated))
-        self.remoteDataFetcher = RemoteDataFetcher.init(dispatchQueue: DispatchQueue.global(qos: .userInitiated))
+        self.userInitiatedConcurrentQueue = DispatchQueue(label: "com.shiaulis.ListOfEmployees.userInitiatedConcurrentQueue",
+                                                          qos: .userInitiated,
+                                                          attributes: .concurrent)
+
+        self.employeesReadWriteQueue = DispatchQueue(label: "com.shiaulis.ListOfEmployees.employeesReadWriteQueue",
+                                                     qos: .userInitiated,
+                                                     attributes: .concurrent)
+
+        self.remoteDataFetcher = RemoteDataFetcher(queue: self.userInitiatedConcurrentQueue)
         do {
-            self.persistentCacheStorage = try PersistentCacheStorage.init(directoryName: "UsersDataCache", dispatchQueue: DispatchQueue.global(qos: .background))
+            let cacheQueue = DispatchQueue(label: "cacheQueue",
+                                           qos: .userInitiated)
+            self.persistentCacheStorage = try PersistentCacheStorage(directoryName: "EmployeesDataCache", queue: cacheQueue)
         }
         catch {
             os_log("Failed to initiate cache. Error '%@'", log: ApplicationModel.logger, type: .error, error.localizedDescription)
             self.persistentCacheStorage = nil
         }
+        self.dataMapper = DataMapper.init(queue: self.userInitiatedConcurrentQueue)
         self.notificationCenter = NotificationCenter.default
-        self.employeesReadWriteQueue = DispatchQueue.global(qos: .userInteractive)
+
         self.employeesSortedArray = []
     }
 
@@ -66,6 +81,7 @@ class ApplicationModel {
     func setup()  {
         remoteDataFetcher.delegate = self
         persistentCacheStorage?.delegate = self
+        grantAccessToContacts()
     }
 
     func startFetchingRemoteData() {
@@ -118,12 +134,32 @@ class ApplicationModel {
         }
         return dictionary
     }
+
+    private func grantAccessToContacts() {
+        let contactsStore = CNContactStore()
+        contactsStore.requestAccess(for: .contacts) { [weak self] (granted, error) in
+            if let error = error {
+                os_log("Failed to access contacts due to error '%@'", log: ApplicationModel.logger, type: .error, error.localizedDescription)
+                return
+            }
+
+            if granted == false {
+                os_log("Access to contacts denied by user", log: ApplicationModel.logger, type: .default)
+                return
+            }
+
+            os_log("Access to contacts granted by user", log: ApplicationModel.logger, type: .debug)
+
+            // We save the property only if acess to contacts is granted by the user
+            self?.contactsStore = contactsStore
+        }
+    }
 }
 
 extension ApplicationModel: RemoteDataFetcherDelegate {
     func remoteDataFetchRequestSuccess(datas: [Data], responses: [URLResponse]) {
         os_log("Remote data fetched succesfully", log: ApplicationModel.logger, type: .default)
-        jsonParser.parse(datas: datas) { [weak self] (error, employees) in
+        self.dataMapper.parse(datas: datas, usingContacts: self.contactsStore) { [weak self] (error, employees) in
             guard let strongSelf = self else {
                 assertionFailure()
                 return
@@ -161,12 +197,12 @@ extension ApplicationModel: PersistentCacheStorageDelegate {
 
     func cachedDataIsReadedSuccessfully(datas: [Data]) {
         os_log("Data read from cache successfully", log: ApplicationModel.logger, type: .default)
-        jsonParser.parse(datas: datas) { [weak self] (error, employees) in
+        self.dataMapper.parse(datas: datas, usingContacts: contactsStore) { [weak self] (error, employees) in
             guard let employeesArray = employees else {
                 os_log("Failed to get employees from cached data", log: ApplicationModel.logger, type: .error)
                 return
             }
-            self?.employeesReadWriteQueue.async(flags: .barrier) { [weak self] in
+            self?.employeesReadWriteQueue.sync { [weak self] in
                 self?.employeesSortedArray = employeesArray.sorted()
             }
         }

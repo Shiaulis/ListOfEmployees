@@ -13,11 +13,10 @@ class EmployeesTableViewController: UITableViewController {
     // MARK: - Properties -
 
     private static let cellId = "EmployeesTableViewControllerCellId"
+    private static let viewControllerTitle = NSLocalizedString("Employees", comment: "view controller title")
 
     private let dataProvider: DataProvider
     fileprivate var employees: [Character:[Employee]]
-
-
 
     // MARK: - Initialization -
 
@@ -25,7 +24,6 @@ class EmployeesTableViewController: UITableViewController {
         self.dataProvider = dataProvider
         self.employees = [:]
         super.init(nibName: nil, bundle: nil)
-        NSLog("TEST: created view controller")
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -36,7 +34,9 @@ class EmployeesTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-//        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: EmployeesTableViewController.cellId)
+        setupNavigationBar()
+        setupTableView()
+        self.tableView.register(EmployeeTableViewCell.self, forCellReuseIdentifier: EmployeesTableViewController.cellId)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -60,20 +60,44 @@ class EmployeesTableViewController: UITableViewController {
         return employeesArray(forSection: section)?.count ?? 0
     }
 
-
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "reuseIdentifier")
+        let cell = tableView.dequeueReusableCell(withIdentifier: EmployeesTableViewController.cellId, for: indexPath)
         guard let employee = employee(forIndexPath: indexPath) else {
             assertionFailure()
             return cell
         }
 
-        cell.textLabel?.text = employee.firstName
-        cell.detailTextLabel?.text = employee.lastName
+//        cell.textLabel?.text = employee.firstName
+//        cell.detailTextLabel?.text = employee.lastName
         return cell
     }
 
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+
+        guard let targetKey = key(forSection: section) else {
+            assertionFailure()
+            return nil
+        }
+
+        let label = UILabel.init()
+        label.text = String.init(targetKey)
+        label.backgroundColor = .lightGray
+        return label
+    }
+
     // MARK: - Private methods -
+
+    // MARK: Setup views
+
+    private func setupNavigationBar() {
+        navigationItem.title = EmployeesTableViewController.viewControllerTitle
+        navigationController?.navigationBar.prefersLargeTitles = true
+    }
+
+    private func setupTableView() {
+        self.tableView.rowHeight = UITableViewAutomaticDimension;
+        self.tableView.estimatedRowHeight = 200.0;
+    }
 
     @objc private func didUpdateEmployeesAction() {
         employees = dataProvider.sortedEmployees
@@ -82,13 +106,21 @@ class EmployeesTableViewController: UITableViewController {
         }
     }
 
-    private func employeesArray(forSection section: Int) -> [Employee]? {
+    private func key(forSection section: Int) -> Character? {
         let sortedKeysArray = employees.keys.sorted()
         if sortedKeysArray.count <= section {
             assertionFailure()
             return nil
         }
-        let targetKey = sortedKeysArray[section]
+        return sortedKeysArray[section]
+    }
+
+    private func employeesArray(forSection section: Int) -> [Employee]? {
+
+        guard let targetKey = key(forSection: section) else {
+            assertionFailure()
+            return nil
+        }
         guard let targetSectionArray = employees[targetKey] else {
             assertionFailure()
             return nil

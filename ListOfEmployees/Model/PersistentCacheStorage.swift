@@ -27,7 +27,7 @@ class PersistentCacheStorage {
 
     // MARK: - Initialization -
 
-    init(directoryName: String, dispatchQueue: DispatchQueue) throws {
+    init(directoryName: String, queue: DispatchQueue) throws {
         self.systemFileManager = FileManager.default
         let cachesDirectoryURL = try PersistentCacheStorage.getCachesDirectoryURL()
         self.destinationCacheDirectoryURL = cachesDirectoryURL.appendingPathComponent(directoryName, isDirectory: true)
@@ -38,7 +38,7 @@ class PersistentCacheStorage {
                                                        attributes: nil)
         }
 
-        self.dispatchQueue = dispatchQueue
+        self.dispatchQueue = queue
     }
 
     // MARK: - Public methods -

@@ -15,12 +15,15 @@ struct Employee: Decodable {
     let contactDetails: ContactDetails?
     let projects: [String]?
 
+    var contactsCardIdentifier: String?
+
     enum CodingKeys: String, CodingKey {
         case firstName = "fname"
         case lastName = "lname"
         case position
         case contactDetails = "contact_details"
         case projects
+        case contactsCardIdentifier
     }
 }
 
