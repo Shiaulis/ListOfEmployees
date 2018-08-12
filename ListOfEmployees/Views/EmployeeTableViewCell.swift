@@ -7,17 +7,40 @@
 //
 
 import UIKit
+import Contacts
+import ContactsUI
+
+protocol EmployeeTableViewCellDelegate: class {
+    func contactCardButtonTapped(sender: EmployeeTableViewCell)
+}
 
 class EmployeeTableViewCell: UITableViewCell {
 
     // MARK: - Properties -
 
+    // Data
+
+    var employee: Employee? {
+        didSet {
+            employeeNameLabel.text = "\(employee?.firstName ?? "") \(employee?.lastName ?? "")"
+            positionLabel.text = employee?.position?.rawValue
+            if employee?.contactsCardIdentifier != nil {
+                contactCardButton.isHidden = false
+            }
+            else {
+                contactCardButton.isHidden = true
+            }
+        }
+    }
+
+    weak var delegate: EmployeeTableViewCellDelegate?
+
+    // UI
     private let employeeNameLabel: UILabel = {
         let label = UILabel.init(frame: .zero)
         label.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.body)
         label.textColor = .black
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "EMPLOYEE"
         return label
     }()
 
@@ -26,14 +49,12 @@ class EmployeeTableViewCell: UITableViewCell {
         label.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.footnote)
         label.textColor = .lightGray
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "TEST"
         return label
     }()
 
-    private let contactButtonView: UIButton = {
+    private let contactCardButton: UIButton = {
         let button = UIButton.init(type: UIButtonType.system)
         button.setImage(#imageLiteral(resourceName: "AddressBookButtonIcon"), for: .normal)
-        button.tintColor = .blue
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -60,14 +81,14 @@ class EmployeeTableViewCell: UITableViewCell {
     func setupViews() {
         contentView.addSubview(employeeNameLabel)
         contentView.addSubview(positionLabel)
-        contentView.addSubview(contactButtonView)
+        contentView.addSubview(contactCardButton)
 
         let safeArea = contentView.safeAreaLayoutGuide
 
-        contactButtonView.heightAnchor.constraint(equalToConstant: 30.0).isActive = true
-        contactButtonView.widthAnchor.constraint(equalTo: contactButtonView.heightAnchor).isActive = true
-        contactButtonView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20).isActive = true
-        contactButtonView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        contactCardButton.heightAnchor.constraint(equalToConstant: 30.0).isActive = true
+        contactCardButton.widthAnchor.constraint(equalTo: contactCardButton.heightAnchor).isActive = true
+        contactCardButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20).isActive = true
+        contactCardButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
 
         employeeNameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8).isActive = true
         employeeNameLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16).isActive = true
@@ -76,5 +97,11 @@ class EmployeeTableViewCell: UITableViewCell {
         positionLabel.leadingAnchor.constraint(equalTo: employeeNameLabel.leadingAnchor).isActive = true
         employeeNameLabel.firstBaselineAnchor.constraint(equalTo: positionLabel.firstBaselineAnchor, constant: -32).isActive = true
 
+        contactCardButton.isHidden = true
+        contactCardButton.addTarget(self, action: #selector(contactCardButtonAction), for: .touchUpInside)
+    }
+
+    @objc func contactCardButtonAction(sender: UIButton) {
+        delegate?.contactCardButtonTapped(sender: self)
     }
 }

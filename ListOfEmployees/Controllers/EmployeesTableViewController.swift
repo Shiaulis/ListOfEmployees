@@ -13,6 +13,7 @@ class EmployeesTableViewController: UITableViewController {
     // MARK: - Properties -
 
     private static let cellId = "EmployeesTableViewControllerCellId"
+    private static let headerId = "EmployeesTableViewControllerHeaderId"
     private static let viewControllerTitle = NSLocalizedString("Employees", comment: "view controller title")
 
     private let dataProvider: DataProvider
@@ -36,7 +37,6 @@ class EmployeesTableViewController: UITableViewController {
         super.viewDidLoad()
         setupNavigationBar()
         setupTableView()
-        self.tableView.register(EmployeeTableViewCell.self, forCellReuseIdentifier: EmployeesTableViewController.cellId)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -62,27 +62,35 @@ class EmployeesTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: EmployeesTableViewController.cellId, for: indexPath)
-        guard let employee = employee(forIndexPath: indexPath) else {
+        guard let employee = getEmployee(forIndexPath: indexPath) else {
             assertionFailure()
             return cell
         }
 
-//        cell.textLabel?.text = employee.firstName
-//        cell.detailTextLabel?.text = employee.lastName
-        return cell
+        guard let employeeCell = cell as? EmployeeTableViewCell else {
+            assertionFailure()
+            return cell
+        }
+
+        employeeCell.delegate = self
+        employeeCell.employee = employee
+        return employeeCell
     }
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 
-        guard let targetKey = key(forSection: section) else {
+        guard let targetCharacter = key(forSection: section) else {
             assertionFailure()
             return nil
         }
 
-        let label = UILabel.init()
-        label.text = String.init(targetKey)
-        label.backgroundColor = .lightGray
-        return label
+        guard let employeeTableHeaderView = tableView.dequeueReusableHeaderFooterView(withIdentifier: EmployeesTableViewController.headerId) as? EmployeesTableHeaderView else {
+            assertionFailure()
+            return nil
+        }
+
+        employeeTableHeaderView.character = targetCharacter
+        return employeeTableHeaderView
     }
 
     // MARK: - Private methods -
@@ -92,9 +100,15 @@ class EmployeesTableViewController: UITableViewController {
     private func setupNavigationBar() {
         navigationItem.title = EmployeesTableViewController.viewControllerTitle
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
+        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedStringKey.foregroundColor: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)]
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)]
+        navigationController?.navigationBar.isTranslucent = false
     }
 
     private func setupTableView() {
+        self.tableView.register(EmployeeTableViewCell.self, forCellReuseIdentifier: EmployeesTableViewController.cellId)
+        self.tableView.register(EmployeesTableHeaderView.self, forHeaderFooterViewReuseIdentifier: EmployeesTableViewController.headerId)
         self.tableView.rowHeight = UITableViewAutomaticDimension;
         self.tableView.estimatedRowHeight = 200.0;
     }
@@ -128,7 +142,7 @@ class EmployeesTableViewController: UITableViewController {
         return targetSectionArray
     }
 
-    private func employee(forIndexPath indexPath: IndexPath) -> Employee? {
+    private func getEmployee(forIndexPath indexPath: IndexPath) -> Employee? {
         guard let employeesForSection = employeesArray(forSection: indexPath.section) else {
             assertionFailure()
             return nil
@@ -140,4 +154,18 @@ class EmployeesTableViewController: UITableViewController {
         }
         return employeesForSection[indexPath.row]
     }
+}
+
+extension EmployeesTableViewController: EmployeeTableViewCellDelegate {
+    func contactCardButtonTapped(sender: EmployeeTableViewCell) {
+        guard let tappedIndexPath = tableView.indexPath(for: sender) else {
+            assertionFailure()
+            return
+        }
+
+        let employee = getEmployee(forIndexPath: tappedIndexPath)
+        print("Contact card should open for \(employee)")
+    }
+
+
 }

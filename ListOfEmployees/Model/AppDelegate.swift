@@ -42,6 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let employeesTableViewController = EmployeesTableViewController.init(usingDataProvider: applicationModel)
         let navigationController = UINavigationController.init(rootViewController: employeesTableViewController)
         window.rootViewController = navigationController
+        window.tintColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
         window.makeKeyAndVisible()
         
         return true

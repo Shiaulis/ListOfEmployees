@@ -19,6 +19,8 @@
 		0904F24B211ECE7D00A7B8B0 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F24A211ECE7D00A7B8B0 /* Errors.swift */; };
 		0904F24D211F184900A7B8B0 /* EmployeesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F24C211F184900A7B8B0 /* EmployeesTableViewController.swift */; };
 		093F7F9A211F86FC0047F267 /* EmployeeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093F7F99211F86FC0047F267 /* EmployeeTableViewCell.swift */; };
+		09409167212060CD007865A8 /* ContactCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09409166212060CD007865A8 /* ContactCardViewController.swift */; };
+		09C5ECE82120736900BB4FF5 /* EmployeesTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C5ECE72120736900BB4FF5 /* EmployeesTableHeaderView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,8 @@
 		0904F24A211ECE7D00A7B8B0 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		0904F24C211F184900A7B8B0 /* EmployeesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeesTableViewController.swift; sourceTree = "<group>"; };
 		093F7F99211F86FC0047F267 /* EmployeeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeeTableViewCell.swift; sourceTree = "<group>"; };
+		09409166212060CD007865A8 /* ContactCardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactCardViewController.swift; sourceTree = "<group>"; };
+		09C5ECE72120736900BB4FF5 /* EmployeesTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeesTableHeaderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				093F7F99211F86FC0047F267 /* EmployeeTableViewCell.swift */,
+				09C5ECE72120736900BB4FF5 /* EmployeesTableHeaderView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -113,6 +118,7 @@
 			isa = PBXGroup;
 			children = (
 				0904F24C211F184900A7B8B0 /* EmployeesTableViewController.swift */,
+				09409166212060CD007865A8 /* ContactCardViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -191,10 +197,12 @@
 				0904F219211DF05A00A7B8B0 /* ApplicationModel.swift in Sources */,
 				0904F21F211DF1E900A7B8B0 /* RemoteDataFether.swift in Sources */,
 				093F7F9A211F86FC0047F267 /* EmployeeTableViewCell.swift in Sources */,
+				09C5ECE82120736900BB4FF5 /* EmployeesTableHeaderView.swift in Sources */,
 				0904F202211DD79A00A7B8B0 /* AppDelegate.swift in Sources */,
 				0904F24B211ECE7D00A7B8B0 /* Errors.swift in Sources */,
 				0904F221211DF20700A7B8B0 /* Employee.swift in Sources */,
 				0904F24D211F184900A7B8B0 /* EmployeesTableViewController.swift in Sources */,
+				09409167212060CD007865A8 /* ContactCardViewController.swift in Sources */,
 				0904F21D211DF0EB00A7B8B0 /* DataMapper.swift in Sources */,
 				0904F249211ECD7600A7B8B0 /* Extentions.swift in Sources */,
 			);
