@@ -15,7 +15,7 @@ import Contacts
 */
 protocol DataProvider {
     var sortedEmployees:[Character: [Employee]] { get }
-    func updateData()
+    func updateData(completionHandler: @escaping (Error?)->Void)
     func fetchContact(forIdentifier: String,
                       keyDescriptor: CNKeyDescriptor,
                       completionHandler:@escaping (CNContact?)->Void)
@@ -40,7 +40,7 @@ class ApplicationModel {
     fileprivate let userInitiatedConcurrentQueue: DispatchQueue
     fileprivate let employeesReadWriteQueue: DispatchQueue
 
-    private let remoteDataFetcher: RemoteDataFetcher
+    private let remoteDataFetcher: RemoteDataFetcher?
     private let persistentCacheStorage: PersistentCacheStorage?
     private let dataMapper: DataMapper
     private let notificationCenter: NotificationCenter
@@ -51,6 +51,7 @@ class ApplicationModel {
             notificationCenter.post(name: .didUpdateEmployees, object: self)
         }
     }
+    fileprivate var employeesUpdateCompletionHandler:((Error?)->Void)?
 
     // MARK: - Initialization -
 
@@ -63,7 +64,8 @@ class ApplicationModel {
                                                      qos: .userInitiated,
                                                      attributes: .concurrent)
 
-        self.remoteDataFetcher = RemoteDataFetcher(queue: self.userInitiatedConcurrentQueue)
+        self.remoteDataFetcher = RemoteDataFetcher(queue: self.userInitiatedConcurrentQueue,
+                                                   dataSourceURLStrings: ApplicationModel.dataURLStringsArray)
         do {
             let cacheQueue = DispatchQueue(label: "cacheQueue",
                                            qos: .userInitiated)
@@ -82,39 +84,54 @@ class ApplicationModel {
     // MARK: - Public methods -
 
     func setup()  {
-        remoteDataFetcher.delegate = self
         persistentCacheStorage?.delegate = self
         grantAccessToContacts()
     }
 
-    func startFetchingRemoteData() {
-        do {
-            let urls: [URL] = try createURLsForRemoteDataFetching()
-            remoteDataFetcher.startFetchData(from: urls)
-        }
-        catch {
-            os_log("Failed to start fetching data. Error: '%@'",
-                   log: ApplicationModel.logger,
-                   type: .error,
-                   error.localizedDescription)
-        }
+    func fetchRemoteData(completionHandler: ((Error?) -> Void)?) {
+        remoteDataFetcher?.startFetchData(completionHandler: { (dataObjects, responses, errors) in
+            if errors.count > 0 {
+                for error in errors {
+                    os_log("Failed to fetch remote data. Error '%@'",
+                           log: ApplicationModel.logger,
+                           type: .error,
+                           error.localizedDescription)
+                }
+                completionHandler?(ApplicationModelError.dataFetchError)
+                return
+            }
+
+            if dataObjects.count == 0 {
+                os_log("Unexpected zero data objects for response without errors",
+                       log: ApplicationModel.logger,
+                       type: .error)
+                completionHandler?(ApplicationModelError.dataFetchError)
+                return
+            }
+
+            os_log("Remote data fetched succesfully", log: ApplicationModel.logger, type: .default)
+            self.dataMapper.parse(datas: dataObjects, usingContacts: self.contactsStore) { [weak self] (error, employees) in
+                guard let strongSelf = self else {
+                    assertionFailure()
+                    return
+                }
+                strongSelf.persistentCacheStorage?.cache(datas: dataObjects)
+                guard let employeesArray = employees else {
+                    assertionFailure()
+                    return
+                }
+                strongSelf.employeesSortedArray = employeesArray.sorted()
+                completionHandler?(nil)
+            }
+        })
     }
+
 
     func restoreDataFromPersistentStorage() {
         persistentCacheStorage?.startReadingCacheData()
     }
 
     // MARK: - Private methods -
-
-    private func createURLsForRemoteDataFetching() throws -> [URL] {
-        let urls = try ApplicationModel.dataURLStringsArray.map { (urlString) -> URL in
-            guard let url = URL.init(string: urlString) else {
-                throw ApplicationModelError.stringToURLConvertError(urlString)
-            }
-            return url
-        }
-        return urls
-    }
 
     /**
      This method expects sorted array as input parameter.
@@ -165,33 +182,6 @@ class ApplicationModel {
 
     @objc private func contactsStoreDidChange() {
         persistentCacheStorage?.startReadingCacheData()
-    }
-}
-
-extension ApplicationModel: RemoteDataFetcherDelegate {
-    func remoteDataFetchRequestSuccess(datas: [Data], responses: [URLResponse]) {
-        os_log("Remote data fetched succesfully", log: ApplicationModel.logger, type: .default)
-        self.dataMapper.parse(datas: datas, usingContacts: self.contactsStore) { [weak self] (error, employees) in
-            guard let strongSelf = self else {
-                assertionFailure()
-                return
-            }
-            strongSelf.persistentCacheStorage?.cache(datas: datas)
-            guard let employeesArray = employees else {
-                assertionFailure()
-                return
-            }
-            strongSelf.employeesSortedArray = employeesArray.sorted()
-        }
-    }
-
-    func remoteDataFetchRequestFailed(errors: [Error]) {
-        for error in errors {
-            os_log("Failed to fetch remote data. Error '%@'",
-                   log: ApplicationModel.logger,
-                   type: .error,
-                   error.localizedDescription)
-        }
     }
 }
 
@@ -247,7 +237,7 @@ extension ApplicationModel: DataProvider {
         }
     }
 
-    func updateData() {
-        startFetchingRemoteData()
+    func updateData(completionHandler: @escaping (Error?) -> Void) {
+        fetchRemoteData(completionHandler: completionHandler)
     }
 }

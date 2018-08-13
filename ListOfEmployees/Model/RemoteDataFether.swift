@@ -9,17 +9,12 @@
 import Foundation
 import os.log
 
-protocol RemoteDataFetcherDelegate: class {
-    func remoteDataFetchRequestSuccess(datas: [Data], responses: [URLResponse])
-    func remoteDataFetchRequestFailed(errors: [Error])
-}
-
-class RemoteDataFetcher: NSObject {
+class RemoteDataFetcher {
 
     // MARK: - Properties -
 
-    weak var delegate: RemoteDataFetcherDelegate?
     private let dispatchQueue: DispatchQueue
+    private let dataSourceURLs: [URL]
     private var datas: [Data]
     private var responses: [URLResponse]
     private var errors: [Error]
@@ -27,21 +22,34 @@ class RemoteDataFetcher: NSObject {
 
     // MARK: - Initialization -
 
-    init(queue: DispatchQueue) {
+    init(queue: DispatchQueue, dataSourceURLStrings: [String]) {
         self.dispatchQueue = queue
+        var dataSourceURLs: [URL] = []
+        for urlString in dataSourceURLStrings {
+            if let url = URL(string: urlString) {
+                dataSourceURLs.append(url)
+            }
+            else {
+                assertionFailure()
+            }
+        }
+        self.dataSourceURLs = dataSourceURLs
         datas = []
         responses = []
         errors = []
-        super.init()
     }
 
     // MARK: - Public methods
 
-    func startFetchData(from urls:[URL]) {
+    func startFetchData(completionHandler:@escaping ([Data], [URLResponse], [Error]) -> Void) {
         dispatchQueue.async { [weak self] in
+            guard let strongSelf = self else {
+                assertionFailure()
+                return
+            }
             let urlSession = URLSession.init(configuration: .default)
             let group = DispatchGroup.init()
-            for url in urls {
+            for url in strongSelf.dataSourceURLs {
                 group.enter()
                 os_log("Data fetch request started for URL '%@'", log: RemoteDataFetcher.logger, type: .debug, url.absoluteString)
                 urlSession.dataTask(with: url, completionHandler: { [weak self] (data, response, error) in
@@ -49,7 +57,7 @@ class RemoteDataFetcher: NSObject {
                 }).resume()
             }
 
-            self?.waitForFinishAllFetches(withGroup: group)
+            strongSelf.waitForFinishAllFetches(withGroup: group, completionHandler: completionHandler)
         }
 
     }
@@ -97,32 +105,14 @@ class RemoteDataFetcher: NSObject {
         }
     }
 
-    func waitForFinishAllFetches(withGroup group: DispatchGroup) {
+    func waitForFinishAllFetches(withGroup group: DispatchGroup, completionHandler:@escaping ([Data], [URLResponse], [Error]) -> Void) {
         group.notify(queue: dispatchQueue) { [weak self] in
             guard let strongSelf = self else {
+                assertionFailure()
                 return
             }
 
-            if strongSelf.errors.count > 0 {
-                strongSelf.delegate?.remoteDataFetchRequestFailed(errors: strongSelf.errors)
-                return
-            }
-
-            if strongSelf.datas.count != 2 {
-                os_log("Unexpected number of data objects '%d'",
-                       log: RemoteDataFetcher.logger,
-                       type: .error,
-                       strongSelf.datas.count)
-            }
-
-            if strongSelf.responses.count != 2 {
-                os_log("Unexpected number of response objects '%d'",
-                       log: RemoteDataFetcher.logger,
-                       type: .error,
-                       strongSelf.datas.count)
-            }
-
-            strongSelf.delegate?.remoteDataFetchRequestSuccess(datas: strongSelf.datas, responses: strongSelf.responses)
+            completionHandler(strongSelf.datas, strongSelf.responses, strongSelf.errors)
         }
     }
 }
