@@ -20,6 +20,8 @@ class EmployeesTableViewController: UITableViewController {
     private let dataProvider: DataProvider
     fileprivate var employees: [Character:[Employee]]
 
+
+
     // MARK: - Initialization -
 
     init(usingDataProvider dataProvider: DataProvider) {
@@ -38,6 +40,7 @@ class EmployeesTableViewController: UITableViewController {
         super.viewDidLoad()
         setupNavigationBar()
         setupTableView()
+        view.backgroundColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -100,24 +103,35 @@ class EmployeesTableViewController: UITableViewController {
 
     private func setupNavigationBar() {
         navigationItem.title = EmployeesTableViewController.viewControllerTitle
-        navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
-        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedStringKey.foregroundColor: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)]
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)]
-        navigationController?.navigationBar.isTranslucent = false
     }
 
     private func setupTableView() {
-        self.tableView.register(EmployeeTableViewCell.self, forCellReuseIdentifier: EmployeesTableViewController.cellId)
-        self.tableView.register(EmployeesTableHeaderView.self, forHeaderFooterViewReuseIdentifier: EmployeesTableViewController.headerId)
-        self.tableView.rowHeight = UITableViewAutomaticDimension;
-        self.tableView.estimatedRowHeight = 200.0;
+        tableView.register(EmployeeTableViewCell.self, forCellReuseIdentifier: EmployeesTableViewController.cellId)
+        tableView.register(EmployeesTableHeaderView.self, forHeaderFooterViewReuseIdentifier: EmployeesTableViewController.headerId)
+        tableView.rowHeight = UITableViewAutomaticDimension;
+        tableView.refreshControl = UIRefreshControl()
+        tableView.refreshControl?.tintColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 1)
+        tableView.refreshControl?.attributedTitle = NSAttributedString(string: "Fetching Remote Server …",
+                                                                       attributes: [NSAttributedStringKey.foregroundColor : #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)])
+        tableView.refreshControl?.addTarget(self, action: #selector(refreshControlAction), for: .valueChanged)
     }
 
     @objc private func didUpdateEmployeesAction() {
         employees = dataProvider.sortedEmployees
         DispatchQueue.main.async { [weak self] in
+            self?.tableView.refreshControl?.endRefreshing()
             self?.tableView.reloadData()
+        }
+    }
+
+    @objc private func refreshControlAction() {
+        dataProvider.updateData { (error) in
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
         }
     }
 
