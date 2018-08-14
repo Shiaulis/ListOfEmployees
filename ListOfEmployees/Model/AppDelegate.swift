@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         applicationModel.setup()
         applicationModel.fetchRemoteData(completionHandler: nil)
-        applicationModel.restoreDataFromPersistentStorage()
+        applicationModel.startRestoringDataFromPersistentStorageIfPossible()
         
         return true;
     }

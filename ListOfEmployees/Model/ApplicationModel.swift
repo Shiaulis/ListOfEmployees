@@ -21,8 +21,6 @@ protocol DataProvider {
                       completionHandler:@escaping (CNContact?)->Void)
 }
 
-
-
 class ApplicationModel {
 
     // MARK: - Properties -
@@ -43,15 +41,9 @@ class ApplicationModel {
     private let remoteDataFetcher: RemoteDataFetcher?
     private let persistentCacheStorage: PersistentCacheStorage?
     private let dataMapper: DataMapper
-    private let notificationCenter: NotificationCenter
     private var contactsStore: CNContactStore?
     // Data
-    fileprivate var employeesSortedArray: [Employee] {
-        didSet {
-            notificationCenter.post(name: .didUpdateEmployees, object: self)
-        }
-    }
-    fileprivate var employeesUpdateCompletionHandler:((Error?)->Void)?
+    fileprivate var employeesSortedArray: [Employee]
 
     // MARK: - Initialization -
 
@@ -76,7 +68,6 @@ class ApplicationModel {
             self.persistentCacheStorage = nil
         }
         self.dataMapper = DataMapper.init(queue: self.userInitiatedConcurrentQueue)
-        self.notificationCenter = NotificationCenter.default
 
         self.employeesSortedArray = []
     }
@@ -127,8 +118,10 @@ class ApplicationModel {
     }
 
 
-    func restoreDataFromPersistentStorage() {
-        persistentCacheStorage?.startReadingCacheData()
+    func startRestoringDataFromPersistentStorageIfPossible() {
+        if let persistentStorage = persistentCacheStorage, persistentStorage.isDataCached {
+            persistentCacheStorage?.startReadingCacheData()
+        }
     }
 
     // MARK: - Private methods -
@@ -176,7 +169,7 @@ class ApplicationModel {
             }
             // We save the property only if acess to contacts is granted by the user
             strongSelf.contactsStore = contactsStore
-            strongSelf.notificationCenter.addObserver(strongSelf, selector: #selector(strongSelf.contactsStoreDidChange), name: Notification.Name.CNContactStoreDidChange, object: nil)
+            NotificationCenter.default.addObserver(strongSelf, selector: #selector(strongSelf.contactsStoreDidChange), name: Notification.Name.CNContactStoreDidChange, object: nil)
         }
     }
 
@@ -207,6 +200,7 @@ extension ApplicationModel: PersistentCacheStorageDelegate {
             self?.employeesReadWriteQueue.sync { [weak self] in
                 self?.employeesSortedArray = employeesArray.sorted()
             }
+            NotificationCenter.default.post(name: .didLoadEmployeesFromCache, object: nil)
         }
     }
 

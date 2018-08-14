@@ -18,9 +18,15 @@ class EmployeesTableViewController: UITableViewController {
     private static let viewControllerTitle = NSLocalizedString("Employees", comment: "view controller title")
 
     private let dataProvider: DataProvider
-    fileprivate var employees: [Character:[Employee]]
-
-
+    fileprivate var employees: [Character:[Employee]] {
+        didSet {
+            if employees.count > 0 {
+                DispatchQueue.main.async { [weak self] in
+                    self?.tableView.backgroundView = nil
+                }
+            }
+        }
+    }
 
     // MARK: - Initialization -
 
@@ -45,13 +51,13 @@ class EmployeesTableViewController: UITableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        employees = dataProvider.sortedEmployees
-        NotificationCenter.default.addObserver(self, selector: #selector(didUpdateEmployeesAction), name: .didUpdateEmployees, object: nil)
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        NotificationCenter.default.removeObserver(self, name: .didUpdateEmployees, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didLoadEmployeesFromCacheNotificationAction), name: .didLoadEmployeesFromCache, object: nil)
+        updateDataFromDataProvider()
+        tableView.refreshControl?.beginRefreshing()
+        requestDataFromDataProvider()
+        if employees.count == 0 {
+            tableView.backgroundView = PlaceholderView()
+        }
     }
 
     // MARK: - Table view data source -
@@ -116,23 +122,36 @@ class EmployeesTableViewController: UITableViewController {
         tableView.refreshControl?.attributedTitle = NSAttributedString(string: "Fetching Remote Server …",
                                                                        attributes: [NSAttributedStringKey.foregroundColor : #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)])
         tableView.refreshControl?.addTarget(self, action: #selector(refreshControlAction), for: .valueChanged)
+        tableView.tableFooterView = UIView()
     }
 
-    @objc private func didUpdateEmployeesAction() {
-        employees = dataProvider.sortedEmployees
+    @objc private func refreshControlAction() {
+        requestDataFromDataProvider()
+    }
+
+    @objc private func didLoadEmployeesFromCacheNotificationAction() {
+        updateDataFromDataProvider()
         DispatchQueue.main.async { [weak self] in
-            self?.tableView.refreshControl?.endRefreshing()
             self?.tableView.reloadData()
         }
     }
 
-    @objc private func refreshControlAction() {
-        dataProvider.updateData { (error) in
+    private func requestDataFromDataProvider() {
+        dataProvider.updateData { [weak self] (error) in
             if let error = error {
                 print(error.localizedDescription)
-                return
+
+            }
+            self?.updateDataFromDataProvider()
+            DispatchQueue.main.async { [weak self] in
+                self?.tableView.refreshControl?.endRefreshing()
+                self?.tableView.reloadData()
             }
         }
+    }
+
+    private func updateDataFromDataProvider() {
+        employees = dataProvider.sortedEmployees
     }
 
     private func key(forSection section: Int) -> Character? {

@@ -18,8 +18,9 @@ protocol PersistentCacheStorageDelegate: class {
 
 class PersistentCacheStorage {
 
-    // MARK: - Properties -z
+    // MARK: - Properties -
     weak var delegate: PersistentCacheStorageDelegate?
+    var isDataCached: Bool
     private let dispatchQueue: DispatchQueue
     private let systemFileManager: FileManager
     private let destinationCacheDirectoryURL: URL
@@ -36,14 +37,20 @@ class PersistentCacheStorage {
             try self.systemFileManager.createDirectory(at: self.destinationCacheDirectoryURL,
                                                        withIntermediateDirectories: true,
                                                        attributes: nil)
+            self.isDataCached = false
+        }
+        else {
+            self.isDataCached = true
         }
 
         self.dispatchQueue = queue
+
     }
 
     // MARK: - Public methods -
 
     func cache(datas: [Data]) {
+        self.isDataCached = false
         dispatchQueue.sync { [weak self] in
             guard let strongSelf = self else {
                 assertionFailure()
@@ -60,6 +67,7 @@ class PersistentCacheStorage {
                     os_log("Data successfully cached at path '%@'", log: PersistentCacheStorage.logger, type: .debug, url.path)
                 }
                 strongSelf.delegate?.cachingDataSucceeded()
+                strongSelf.isDataCached = true
             }
             catch {
                 os_log("Failed to cache data. Error '%@'", log: PersistentCacheStorage.logger, type: .error, error.localizedDescription)
@@ -99,6 +107,7 @@ class PersistentCacheStorage {
 
     private func cleanCacheDirectory() throws {
         try cleanDirectory(url: self.destinationCacheDirectoryURL)
+        self.isDataCached = false
     }
 
     private func cleanDirectory(url: URL) throws {
