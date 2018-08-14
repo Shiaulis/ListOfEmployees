@@ -119,7 +119,7 @@ class EmployeesTableViewController: UITableViewController {
         tableView.rowHeight = UITableViewAutomaticDimension;
         tableView.refreshControl = UIRefreshControl()
         tableView.refreshControl?.tintColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 1)
-        tableView.refreshControl?.attributedTitle = NSAttributedString(string: "Fetching Remote Server …",
+        tableView.refreshControl?.attributedTitle = NSAttributedString(string: "Fetch data from remote server",
                                                                        attributes: [NSAttributedStringKey.foregroundColor : #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)])
         tableView.refreshControl?.addTarget(self, action: #selector(refreshControlAction), for: .valueChanged)
         tableView.tableFooterView = UIView()
