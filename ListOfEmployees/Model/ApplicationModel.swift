@@ -34,10 +34,9 @@ class ApplicationModel {
     fileprivate static let logger = OSLog.init(subsystem: LogSubsystem.applicationModel, object: ApplicationModel.self)
 
     // MARK: Private properties
-    // Services
     fileprivate let userInitiatedConcurrentQueue: DispatchQueue
     fileprivate let employeesReadWriteQueue: DispatchQueue
-
+    // Services
     private let persistentCacheStorage: PersistentCacheStorage?
     private let dataMapper: DataMapper
     private var contactsStore: CNContactStore?
@@ -52,6 +51,7 @@ class ApplicationModel {
                                                           qos: .userInitiated,
                                                           attributes: .concurrent)
 
+        // This queue provides ability to read/write data synchronously without readler-writer problem
         self.employeesReadWriteQueue = DispatchQueue(label: "com.shiaulis.ListOfEmployees.employeesReadWriteQueue",
                                                      qos: .userInitiated,
                                                      attributes: .concurrent)

@@ -19,8 +19,10 @@ protocol PersistentCacheStorageDelegate: class {
 class PersistentCacheStorage {
 
     // MARK: - Properties -
+    // Public
     weak var delegate: PersistentCacheStorageDelegate?
     var isDataCached: Bool
+    // Private
     private let dispatchQueue: DispatchQueue
     private let systemFileManager: FileManager
     private let destinationCacheDirectoryURL: URL
@@ -97,9 +99,6 @@ class PersistentCacheStorage {
             catch {
                 strongSelf.delegate?.cachedDataReadingFailed(withError: error)
             }
-
-
-
         }
     }
 
