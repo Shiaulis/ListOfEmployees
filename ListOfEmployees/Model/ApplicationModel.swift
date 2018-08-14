@@ -38,11 +38,11 @@ class ApplicationModel {
     fileprivate let userInitiatedConcurrentQueue: DispatchQueue
     fileprivate let employeesReadWriteQueue: DispatchQueue
 
-    private let remoteDataFetcher: RemoteDataFetcher?
     private let persistentCacheStorage: PersistentCacheStorage?
     private let dataMapper: DataMapper
     private var contactsStore: CNContactStore?
     // Data
+    private let dataSourceURLs: [URL]
     fileprivate var employeesSortedArray: [Employee]
 
     // MARK: - Initialization -
@@ -56,8 +56,7 @@ class ApplicationModel {
                                                      qos: .userInitiated,
                                                      attributes: .concurrent)
 
-        self.remoteDataFetcher = RemoteDataFetcher(queue: self.userInitiatedConcurrentQueue,
-                                                   dataSourceURLStrings: ApplicationModel.dataURLStringsArray)
+        self.dataSourceURLs = ApplicationModel.createURLs(from: ApplicationModel.dataURLStringsArray)
         do {
             let cacheQueue = DispatchQueue(label: "cacheQueue",
                                            qos: .userInitiated)
@@ -80,7 +79,11 @@ class ApplicationModel {
     }
 
     func fetchRemoteData(completionHandler: ((Error?) -> Void)?) {
-        remoteDataFetcher?.startFetchData(completionHandler: { (dataObjects, responses, errors) in
+        var remoteDataFetcher:RemoteDataFetcher? = RemoteDataFetcher()
+        remoteDataFetcher?.fetchRemoteData(fromURLs: self.dataSourceURLs,
+                                           queue: DispatchQueue.global(qos: .userInitiated),
+                                           completionHandler: { (dataObjects, responses, errors) in
+            remoteDataFetcher = nil
             if errors.count > 0 {
                 for error in errors {
                     os_log("Failed to fetch remote data. Error '%@'",
@@ -175,6 +178,20 @@ class ApplicationModel {
 
     @objc private func contactsStoreDidChange() {
         persistentCacheStorage?.startReadingCacheData()
+    }
+
+    private static func createURLs(from urlStrings:[String]) -> [URL] {
+        var urls: [URL] = []
+        for urlString in urlStrings {
+            if let url = URL(string: urlString) {
+                urls.append(url)
+            }
+            else {
+                os_log("Failed to transform urlString '%@' to URL", log: ApplicationModel.logger, type: .error, urlString)
+                assertionFailure()
+            }
+        }
+        return urls
     }
 }
 
