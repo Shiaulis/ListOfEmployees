@@ -34,7 +34,6 @@ class ApplicationModel {
     fileprivate static let logger = OSLog.init(subsystem: LogSubsystem.applicationModel, object: ApplicationModel.self)
 
     // MARK: Private properties
-    fileprivate let userInitiatedConcurrentQueue: DispatchQueue
     fileprivate let employeesReadWriteQueue: DispatchQueue
     // Services
     private let persistentCacheStorage: PersistentCacheStorage?
@@ -47,14 +46,9 @@ class ApplicationModel {
     // MARK: - Initialization -
 
     init() {
-        self.userInitiatedConcurrentQueue = DispatchQueue(label: "com.shiaulis.ListOfEmployees.userInitiatedConcurrentQueue",
-                                                          qos: .userInitiated,
-                                                          attributes: .concurrent)
-
         // This queue provides ability to read/write data synchronously without readler-writer problem
         self.employeesReadWriteQueue = DispatchQueue(label: "com.shiaulis.ListOfEmployees.employeesReadWriteQueue",
-                                                     qos: .userInitiated,
-                                                     attributes: .concurrent)
+                                                     qos: .userInitiated)
 
         self.dataSourceURLs = ApplicationModel.createURLs(from: ApplicationModel.dataURLStringsArray)
         do {
@@ -66,7 +60,7 @@ class ApplicationModel {
             os_log("Failed to initiate cache. Error '%@'", log: ApplicationModel.logger, type: .error, error.localizedDescription)
             self.persistentCacheStorage = nil
         }
-        self.dataMapper = DataMapper.init(queue: self.userInitiatedConcurrentQueue)
+        self.dataMapper = DataMapper.init(queue: DispatchQueue.global(qos: .userInitiated))
 
         self.employeesSortedArray = []
     }
@@ -114,7 +108,9 @@ class ApplicationModel {
                     assertionFailure()
                     return
                 }
-                strongSelf.employeesSortedArray = employeesArray.sorted()
+                strongSelf.employeesReadWriteQueue.sync {
+                    strongSelf.employeesSortedArray = employeesArray.sorted()
+                }
                 completionHandler?(nil)
             }
         })
