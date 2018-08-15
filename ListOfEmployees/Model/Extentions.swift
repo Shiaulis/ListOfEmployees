@@ -20,7 +20,7 @@ extension OSLog {
 }
 
 extension Notification.Name {
-    static let didLoadEmployeesFromCache = Notification.Name.init("didLoadEmployeesFromCache")
+    static let employeesListDidChangeExternally = Notification.Name.init("employeesListDidChangeExternally")
 }
 
 extension UIView {

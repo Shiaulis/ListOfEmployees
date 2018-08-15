@@ -62,7 +62,7 @@ class EmployeesTableViewController: UITableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(didLoadEmployeesFromCacheNotificationAction), name: .didLoadEmployeesFromCache, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(employeesListDidChangeExternallyAction), name: .employeesListDidChangeExternally, object: nil)
         tableView.refreshControl?.beginRefreshing()
         requestDataFromDataProvider()
         if employees.count == 0 {
@@ -150,7 +150,7 @@ class EmployeesTableViewController: UITableViewController {
         requestDataFromDataProvider()
     }
 
-    @objc private func didLoadEmployeesFromCacheNotificationAction() {
+    @objc private func employeesListDidChangeExternallyAction() {
         updateDataFromDataProvider()
         DispatchQueue.main.async { [weak self] in
             self?.tableView.reloadData()
@@ -244,7 +244,6 @@ class EmployeesTableViewController: UITableViewController {
             }
         })
     }
-
 }
 
 extension EmployeesTableViewController: EmployeeTableViewCellDelegate {

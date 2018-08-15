@@ -69,7 +69,9 @@ class ApplicationModel {
 
     func setup()  {
         persistentCacheStorage?.delegate = self
-        grantAccessToContacts()
+        grantAccessToContacts { [weak self] in
+            self?.persistentCacheStorage?.startReadingCacheData()
+        }
     }
 
     func fetchRemoteData(completionHandler: ((Error?) -> Void)?) {
@@ -149,16 +151,18 @@ class ApplicationModel {
         return dictionary
     }
 
-    private func grantAccessToContacts() {
+    private func grantAccessToContacts(completionHandler:@escaping ()->Void) {
         let contactsStore = CNContactStore()
         contactsStore.requestAccess(for: .contacts) { [weak self] (granted, error) in
             if let error = error {
                 os_log("Failed to access contacts due to error '%@'", log: ApplicationModel.logger, type: .error, error.localizedDescription)
+                completionHandler()
                 return
             }
 
             if granted == false {
                 os_log("Access to contacts denied by user", log: ApplicationModel.logger, type: .default)
+                completionHandler()
                 return
             }
 
@@ -171,6 +175,8 @@ class ApplicationModel {
             // We save the property only if acess to contacts is granted by the user
             strongSelf.contactsStore = contactsStore
             NotificationCenter.default.addObserver(strongSelf, selector: #selector(strongSelf.contactsStoreDidChange), name: Notification.Name.CNContactStoreDidChange, object: nil)
+            // We should read data again to match employees with contacts list
+            completionHandler()
         }
     }
 
@@ -215,7 +221,7 @@ extension ApplicationModel: PersistentCacheStorageDelegate {
             self?.employeesReadWriteQueue.sync { [weak self] in
                 self?.employeesSortedArray = employeesArray.sorted()
             }
-            NotificationCenter.default.post(name: .didLoadEmployeesFromCache, object: nil)
+            NotificationCenter.default.post(name: .employeesListDidChangeExternally, object: nil)
         }
     }
 

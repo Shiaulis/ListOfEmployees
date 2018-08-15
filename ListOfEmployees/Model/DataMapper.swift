@@ -40,7 +40,7 @@ class DataMapper {
                 }
 
                 if let contactsStore = contactsStore {
-                    completionHandler(nil, strongSelf.employeesWithFilledContactsIdentifiers(from: employees, contactsStore: contactsStore))
+                    completionHandler(nil, strongSelf.fillEmployeesListWithContactsIdentifiers(employees: employees, contactsStore: contactsStore))
                 }
                 else {
                     completionHandler(nil, employees)
@@ -65,7 +65,7 @@ class DataMapper {
         }
     }
 
-    private func employeesWithFilledContactsIdentifiers(from employees: [Employee], contactsStore: CNContactStore) -> [Employee] {
+    private func fillEmployeesListWithContactsIdentifiers(employees: [Employee], contactsStore: CNContactStore) -> [Employee] {
         var mutatedEmployees = employees;
         do {
             for index in 0..<employees.count {
@@ -88,7 +88,7 @@ class DataMapper {
         let keysToFetch = [CNContactGivenNameKey, CNContactFamilyNameKey]
         let contacts = try contactsStore.unifiedContacts(matching: predicate, keysToFetch: keysToFetch as [CNKeyDescriptor])
         for contact in contacts {
-            if contact.familyName.lowercased() == employee.lastName {
+            if contact.familyName == employee.lastName {
                 return contact.identifier
             }
         }
