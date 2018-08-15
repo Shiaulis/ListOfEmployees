@@ -84,11 +84,11 @@ class DataMapper {
             assertionFailure()
             return nil
         }
-        let predicate = CNContact.predicateForContacts(matchingName: firstName)
+        let predicate = CNContact.predicateForContacts(matchingName: firstName.lowercased())
         let keysToFetch = [CNContactGivenNameKey, CNContactFamilyNameKey]
         let contacts = try contactsStore.unifiedContacts(matching: predicate, keysToFetch: keysToFetch as [CNKeyDescriptor])
         for contact in contacts {
-            if contact.familyName == employee.lastName {
+            if contact.familyName.lowercased() == employee.lastName?.lowercased() {
                 return contact.identifier
             }
         }
