@@ -69,7 +69,7 @@ class EmployeeDetailsViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
-            return EmployeeDetailsViewCell.init(image: #imageLiteral(resourceName: "LaunchScreenImage"), title: employee.fullName, caption: employee.position?.rawValue)
+            return EmployeeDetailsViewCell.init(image: #imageLiteral(resourceName: "LaunchScreenImage"), title: employee.fullName, caption: employee.position?.description ?? "")
         }
 
         if indexPath.section == 1 {

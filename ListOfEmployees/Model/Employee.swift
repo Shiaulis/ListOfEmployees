@@ -66,6 +66,25 @@ enum EmployeePosition: String, Decodable {
     case android = "ANDROID"
     case sales = "SALES"
     case tester = "TESTER"
+
+    var description: String {
+        switch self {
+        case .ios:
+            return NSLocalizedString("iOS Developer", comment: "employee position name")
+        case .pm:
+            return NSLocalizedString("Project Manager", comment: "employee position name")
+        case .other:
+            return NSLocalizedString("Other Staff", comment: "employee position name")
+        case .web:
+            return NSLocalizedString("Web Developer", comment: "employee position name")
+        case .android:
+            return NSLocalizedString("Android Developer", comment: "employee position name")
+        case .sales:
+            return NSLocalizedString("Sales", comment: "employee position name")
+        case .tester:
+            return NSLocalizedString("Software Tester", comment: "employee position name")
+        }
+    }
 }
 
 struct ContactDetails: Decodable {
