@@ -38,6 +38,11 @@ class EmployeesTableHeaderView: UITableViewHeaderFooterView {
         setupViews()
     }
 
+    convenience init(withTitle title: String) {
+        self.init(reuseIdentifier: nil)
+        self.headerTitle = title
+    }
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

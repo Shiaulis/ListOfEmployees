@@ -11,6 +11,9 @@ import UIKit
 class EmployeeDetailsViewController: UITableViewController {
 
     // MARK: - Properties -
+    // Resources
+    private static let contactDetailsHeaderTitle = NSLocalizedString("Contact Details", comment: "Header title in details view")
+    private static let projectsHeaderTitle = NSLocalizedString("Projects", comment: "Header title in details view")
 
     private let employee: Employee
 
@@ -107,9 +110,25 @@ class EmployeeDetailsViewController: UITableViewController {
         return 50
     }
 
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        switch section {
+        case 0:
+            return nil
+        case 1:
+            return EmployeesTableHeaderView(withTitle: EmployeeDetailsViewController.contactDetailsHeaderTitle)
+        case 2:
+            return EmployeesTableHeaderView(withTitle: EmployeeDetailsViewController.projectsHeaderTitle)
+        default:
+            assertionFailure()
+            return nil
+        }
+    }
+
+
     // MARK: - Private methods -
 
     private func setupTableView() {
         tableView.backgroundColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
+        tableView.sectionHeaderHeight = UITableViewAutomaticDimension;
     }
 }
