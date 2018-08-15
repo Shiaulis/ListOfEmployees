@@ -103,6 +103,17 @@ class EmployeesTableViewController: UITableViewController {
         return employeeTableHeaderView
     }
 
+    // MARK: - Tableview delegate -
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let employee = getEmployee(forIndexPath: indexPath) else {
+            assertionFailure()
+            return
+        }
+        let employeeDetailsViewController = EmployeeDetailsViewController.init(for: employee)
+        navigationController?.pushViewController(employeeDetailsViewController, animated: true)
+    }
+
     // MARK: - Private methods -
 
     // MARK: Setup views

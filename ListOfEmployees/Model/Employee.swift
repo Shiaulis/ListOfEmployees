@@ -16,6 +16,9 @@ struct Employee: Decodable {
     let projects: [String]?
 
     var contactsCardIdentifier: String?
+    var fullName: String {
+        return "\(firstName ?? "") \(lastName ?? "")"
+    }
 
     enum CodingKeys: String, CodingKey {
         case firstName = "fname"
