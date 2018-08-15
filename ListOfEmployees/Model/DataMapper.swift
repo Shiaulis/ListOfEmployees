@@ -88,19 +88,14 @@ class DataMapper {
         let keysToFetch = [CNContactGivenNameKey, CNContactFamilyNameKey]
         let contacts = try contactsStore.unifiedContacts(matching: predicate, keysToFetch: keysToFetch as [CNKeyDescriptor])
         for contact in contacts {
-            if contact.familyName == employee.lastName {
+            if contact.familyName.lowercased() == employee.lastName {
                 return contact.identifier
             }
         }
         return nil
     }
-
 }
 
-
-
-struct Json: Decodable {
+private struct Json: Decodable {
     let employees: [Employee]
 }
-
-

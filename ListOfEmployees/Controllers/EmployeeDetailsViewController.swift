@@ -15,9 +15,10 @@ class EmployeeDetailsViewController: UITableViewController {
     private static let contactDetailsHeaderTitle = NSLocalizedString("Contact Details", comment: "Header title in details view")
     private static let projectsHeaderTitle = NSLocalizedString("Projects", comment: "Header title in details view")
 
+    // Data
     private let employee: Employee
 
-    // NARK: - Initialization -
+    // MARK: - Initialization -
 
     init(for employee: Employee) {
         self.employee = employee
@@ -33,6 +34,7 @@ class EmployeeDetailsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
+
     }
 
     // MARK: - TableViewDataSource methods -
@@ -128,7 +130,8 @@ class EmployeeDetailsViewController: UITableViewController {
     // MARK: - Private methods -
 
     private func setupTableView() {
-        tableView.backgroundColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
+        tableView.backgroundColor = #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1)
         tableView.sectionHeaderHeight = UITableViewAutomaticDimension;
     }
 }
+
