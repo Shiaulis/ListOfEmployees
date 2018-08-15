@@ -15,6 +15,7 @@ import Contacts
 */
 protocol DataProvider {
     var sortedEmployees:[EmployeePosition: [Employee]] { get }
+    func searchForEmployees(usingText: String) -> [Employee]
     func updateData(completionHandler: @escaping (Error?)->Void)
     func fetchContact(forIdentifier: String,
                       keyDescriptor: CNKeyDescriptor,
@@ -234,6 +235,33 @@ extension ApplicationModel: PersistentCacheStorageDelegate {
 }
 
 extension ApplicationModel: DataProvider {
+    func searchForEmployees(usingText text: String) -> [Employee] {
+        let targetLowercasedText = text.lowercased()
+        return employeesSortedArray.filter { (employee) -> Bool in
+            if employee.fullName.lowercased().contains(targetLowercasedText) {
+                return true
+            }
+            if let email = employee.contactDetails?.email, email.lowercased().contains(targetLowercasedText) {
+                return true
+            }
+
+            if  let position = employee.position, position.rawValue.lowercased().contains(targetLowercasedText) || position.description.lowercased().contains(targetLowercasedText) {
+                return true
+            }
+
+            guard let projects = employee.projects else {
+                return false
+            }
+
+            for project in projects {
+                if project.lowercased().contains(targetLowercasedText) {
+                    return true
+                }
+            }
+            return false
+        }
+    }
+
     func fetchContact(forIdentifier identifier: String, keyDescriptor: CNKeyDescriptor, completionHandler: @escaping (CNContact?) -> Void) {
         if let contactsStore = contactsStore {
             dataMapper.contact(forIdentifier: identifier, contactsStore: contactsStore, keyDescriptor: keyDescriptor, completionHandler: completionHandler)
@@ -244,7 +272,6 @@ extension ApplicationModel: DataProvider {
             completionHandler(nil)
         }
     }
-
     
     var sortedEmployees: [EmployeePosition : [Employee]] {
         return employeesReadWriteQueue.sync {

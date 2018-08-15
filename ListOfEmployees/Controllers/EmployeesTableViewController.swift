@@ -13,6 +13,8 @@ class EmployeesTableViewController: UITableViewController {
 
     // MARK: - Properties -
     private static let viewControllerTitle = NSLocalizedString("Employees", comment: "view controller title")
+    private static let cellId = "EmployeesTableViewControllerCellId"
+    private static let headerId = "EmployeesTableViewControllerHeaderId"
 
     // Data
     private let dataProvider: DataProvider
@@ -25,16 +27,18 @@ class EmployeesTableViewController: UITableViewController {
             }
         }
     }
+    var filteredEmployees: [Employee]
 
     // UI
-    private static let cellId = "EmployeesTableViewControllerCellId"
-    private static let headerId = "EmployeesTableViewControllerHeaderId"
+    private let searchController: UISearchController
 
     // MARK: - Initialization -
 
     init(usingDataProvider dataProvider: DataProvider) {
         self.dataProvider = dataProvider
         self.employees = [:]
+        self.searchController = UISearchController(searchResultsController: nil)
+        self.filteredEmployees = []
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -48,6 +52,7 @@ class EmployeesTableViewController: UITableViewController {
         super.viewDidLoad()
         setupNavigationBar()
         setupTableView()
+        setupSearchController()
         view.backgroundColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
         updateDataFromDataProvider()
         requestDataFromDataProvider()
@@ -62,10 +67,16 @@ class EmployeesTableViewController: UITableViewController {
     // MARK: - Table view data source -
 
     override func numberOfSections(in tableView: UITableView) -> Int {
+        if isFiltering() {
+            return 1
+        }
         return employees.keys.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if isFiltering() {
+            return filteredEmployees.count
+        }
         return employeesArray(forSection: section)?.count ?? 0
     }
 
@@ -122,6 +133,7 @@ class EmployeesTableViewController: UITableViewController {
         navigationItem.title = EmployeesTableViewController.viewControllerTitle
         navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)]
+        navigationItem.rightBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: .search, target: self, action: #selector(searchButtonAction))
     }
 
     private func setupTableView() {
@@ -133,7 +145,14 @@ class EmployeesTableViewController: UITableViewController {
         tableView.refreshControl?.attributedTitle = NSAttributedString(string: "Fetch data from remote server",
                                                                        attributes: [NSAttributedStringKey.foregroundColor : #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)])
         tableView.refreshControl?.addTarget(self, action: #selector(refreshControlAction), for: .valueChanged)
-        tableView.tableFooterView = UIView()
+    }
+
+    private func setupSearchController() {
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = NSLocalizedString("Search employee…", comment: "search placeholder")
+        definesPresentationContext = true
+
     }
 
     @objc private func refreshControlAction() {
@@ -145,6 +164,12 @@ class EmployeesTableViewController: UITableViewController {
         DispatchQueue.main.async { [weak self] in
             self?.tableView.reloadData()
         }
+    }
+
+    @objc private func searchButtonAction() {
+        tableView.tableHeaderView = searchController.searchBar
+        searchController.searchBar.becomeFirstResponder()
+        searchController.searchBar.delegate = self
     }
 
     private func requestDataFromDataProvider() {
@@ -176,6 +201,10 @@ class EmployeesTableViewController: UITableViewController {
 
     private func employeesArray(forSection section: Int) -> [Employee]? {
 
+        if isFiltering() {
+            return filteredEmployees
+        }
+
         guard let targetKey = key(forSection: section) else {
             assertionFailure()
             return nil
@@ -198,6 +227,22 @@ class EmployeesTableViewController: UITableViewController {
             return nil
         }
         return employeesForSection[indexPath.row]
+    }
+
+    // Search related methods
+
+    private func searchBarIsEmpty() -> Bool {
+        // Returns true if the text is empty or nil
+        return searchController.searchBar.text?.isEmpty ?? true
+    }
+
+    func isFiltering() -> Bool {
+        return searchController.isActive && searchBarIsEmpty() == false
+    }
+
+    private func filterContentForSearchText(_ searchText: String, scope: String = "All") {
+        filteredEmployees = dataProvider.searchForEmployees(usingText: searchText)
+        tableView.reloadData()
     }
 }
 
@@ -224,5 +269,21 @@ extension EmployeesTableViewController: EmployeeTableViewCellDelegate {
                 viewController.navigationController?.navigationBar.tintColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
             }
         }
+    }
+}
+
+extension EmployeesTableViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let searchText = searchController.searchBar.text else {
+            assertionFailure()
+            return
+        }
+        filterContentForSearchText(searchText)
+    }
+}
+
+extension EmployeesTableViewController: UISearchBarDelegate {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        tableView.tableHeaderView = nil
     }
 }
