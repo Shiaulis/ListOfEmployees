@@ -13,10 +13,7 @@ class EmployeesTableViewController: UITableViewController {
 
     // MARK: - Properties -
 
-    private static let cellId = "EmployeesTableViewControllerCellId"
-    private static let headerId = "EmployeesTableViewControllerHeaderId"
-    private static let viewControllerTitle = NSLocalizedString("Employees", comment: "view controller title")
-
+    // Data
     private let dataProvider: DataProvider
     fileprivate var employees: [EmployeePosition:[Employee]] {
         didSet {
@@ -28,11 +25,23 @@ class EmployeesTableViewController: UITableViewController {
         }
     }
 
+    // UI
+    private static let cellId = "EmployeesTableViewControllerCellId"
+    private static let headerId = "EmployeesTableViewControllerHeaderId"
+    private static let viewControllerTitle = NSLocalizedString("Employees", comment: "view controller title")
+    private let statusMessageView: StatusMessageView
+    private var heightStatusMessageConstraint: NSLayoutConstraint
+    private var zeroHeightStatusMessageConstraint: NSLayoutConstraint
+
+
     // MARK: - Initialization -
 
     init(usingDataProvider dataProvider: DataProvider) {
         self.dataProvider = dataProvider
         self.employees = [:]
+        self.statusMessageView = StatusMessageView()
+        self.heightStatusMessageConstraint = self.statusMessageView.heightAnchor.constraint(equalToConstant: StatusMessageProperties.viewHeight)
+        self.zeroHeightStatusMessageConstraint = self.statusMessageView.heightAnchor.constraint(equalToConstant: 0.0)
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -46,13 +55,14 @@ class EmployeesTableViewController: UITableViewController {
         super.viewDidLoad()
         setupNavigationBar()
         setupTableView()
+        setupStatusMessageView()
         view.backgroundColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
+        updateDataFromDataProvider()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(didLoadEmployeesFromCacheNotificationAction), name: .didLoadEmployeesFromCache, object: nil)
-        updateDataFromDataProvider()
         tableView.refreshControl?.beginRefreshing()
         requestDataFromDataProvider()
         if employees.count == 0 {
@@ -148,6 +158,7 @@ class EmployeesTableViewController: UITableViewController {
     }
 
     private func requestDataFromDataProvider() {
+        self.presentStatusMessageView(withMessage: "updating", type: .progress)
         dataProvider.updateData { [weak self] (error) in
             if let error = error {
                 print(error.localizedDescription)
@@ -157,6 +168,7 @@ class EmployeesTableViewController: UITableViewController {
             DispatchQueue.main.async { [weak self] in
                 self?.tableView.refreshControl?.endRefreshing()
                 self?.tableView.reloadData()
+                self?.presentStatusMessageView(withMessage: "done", type: .done)
             }
         }
     }
@@ -199,6 +211,40 @@ class EmployeesTableViewController: UITableViewController {
         }
         return employeesForSection[indexPath.row]
     }
+
+    private func setupStatusMessageView() {
+        guard let navigationController = self.navigationController else {
+            assertionFailure()
+            return
+        }
+
+        navigationController.view.addSubview(self.statusMessageView)
+        self.statusMessageView.topAnchor.constraint(equalTo: navigationController.navigationBar.bottomAnchor).isActive = true
+        self.statusMessageView.leftAnchor.constraint(equalTo: navigationController.view.leftAnchor).isActive = true
+        self.statusMessageView.rightAnchor.constraint(equalTo: navigationController.view.rightAnchor).isActive = true
+        self.zeroHeightStatusMessageConstraint.isActive = true
+    }
+
+    private func presentStatusMessageView(withMessage message: String, type: MessageType) {
+        self.statusMessageView.show(message: message, type: type)
+        self.zeroHeightStatusMessageConstraint.isActive = false
+        self.heightStatusMessageConstraint.isActive = true
+        UIView.animate(withDuration: 0.2) {
+            self.navigationController?.view.layoutIfNeeded()
+        }
+        dissmissStatusMessageAfterTimeout()
+    }
+
+    func dissmissStatusMessageAfterTimeout() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(StatusMessageProperties.viewTimeAppearing), execute: {
+            self.heightStatusMessageConstraint.isActive = false
+            self.zeroHeightStatusMessageConstraint.isActive = true
+            UIView.animate(withDuration: 0.2) {
+                self.navigationController?.view.layoutIfNeeded()
+            }
+        })
+    }
+
 }
 
 extension EmployeesTableViewController: EmployeeTableViewCellDelegate {
