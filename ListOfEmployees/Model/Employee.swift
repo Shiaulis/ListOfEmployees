@@ -87,6 +87,12 @@ enum EmployeePosition: String, Decodable {
     }
 }
 
+extension EmployeePosition: Comparable {
+    static func < (lhs: EmployeePosition, rhs: EmployeePosition) -> Bool {
+        return lhs.description.lowercased() < rhs.description.lowercased()
+    }
+}
+
 struct ContactDetails: Decodable {
     let email: String?
     let phone: String?

@@ -22,8 +22,7 @@ class EmployeeTableViewCell: UITableViewCell {
 
     var employee: Employee? {
         didSet {
-            employeeNameLabel.text = "\(employee?.firstName ?? "") \(employee?.lastName ?? "")"
-            positionLabel.text = employee?.position?.rawValue
+            employeeNameLabel.text = employee?.fullName
             if employee?.contactsCardIdentifier != nil {
                 contactCardButton.isHidden = false
             }
@@ -40,14 +39,6 @@ class EmployeeTableViewCell: UITableViewCell {
         let label = UILabel.init(frame: .zero)
         label.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.body)
         label.textColor = .black
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    private let positionLabel: UILabel = {
-        let label = UILabel.init(frame: .zero)
-        label.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.footnote)
-        label.textColor = .lightGray
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -80,7 +71,6 @@ class EmployeeTableViewCell: UITableViewCell {
 
     func setupViews() {
         contentView.addSubview(employeeNameLabel)
-        contentView.addSubview(positionLabel)
         contentView.addSubview(contactCardButton)
 
         let safeArea = contentView.safeAreaLayoutGuide
@@ -90,12 +80,8 @@ class EmployeeTableViewCell: UITableViewCell {
         contactCardButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20).isActive = true
         contactCardButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
 
-        employeeNameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8).isActive = true
+        employeeNameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
         employeeNameLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16).isActive = true
-
-        positionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8).isActive = true
-        positionLabel.leadingAnchor.constraint(equalTo: employeeNameLabel.leadingAnchor).isActive = true
-        employeeNameLabel.firstBaselineAnchor.constraint(equalTo: positionLabel.firstBaselineAnchor, constant: -32).isActive = true
 
         contactCardButton.isHidden = true
         contactCardButton.addTarget(self, action: #selector(contactCardButtonAction), for: .touchUpInside)

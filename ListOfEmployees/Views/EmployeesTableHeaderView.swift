@@ -14,16 +14,16 @@ class EmployeesTableHeaderView: UITableViewHeaderFooterView {
 
     // Data
 
-    var character: Character? {
+    var headerTitle: String? {
         didSet {
-            if let character = character {
-                characterLabel.text = String(character)
+            if let headerTitle = self.headerTitle {
+                headerTitleLabel.text = String(headerTitle)
             }
         }
     }
 
     // UI
-    private let characterLabel: UILabel = {
+    private let headerTitleLabel: UILabel = {
         let label = UILabel.init(frame: .zero)
         label.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.headline)
         label.textColor = .white
@@ -46,13 +46,13 @@ class EmployeesTableHeaderView: UITableViewHeaderFooterView {
 
     func setupViews() {
         contentView.backgroundColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
-        contentView.addSubview(characterLabel)
+        contentView.addSubview(headerTitleLabel)
 
         let safeArea = contentView.safeAreaLayoutGuide
 
-        characterLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8).isActive = true
-        characterLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8).isActive = true
-        characterLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16).isActive = true
+        headerTitleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8).isActive = true
+        headerTitleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8).isActive = true
+        headerTitleLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16).isActive = true
     }
 
 }

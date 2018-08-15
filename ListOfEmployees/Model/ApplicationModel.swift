@@ -14,7 +14,7 @@ import Contacts
     Protocol describes an interface from model to UI
 */
 protocol DataProvider {
-    var sortedEmployees:[Character: [Employee]] { get }
+    var sortedEmployees:[EmployeePosition: [Employee]] { get }
     func updateData(completionHandler: @escaping (Error?)->Void)
     func fetchContact(forIdentifier: String,
                       keyDescriptor: CNKeyDescriptor,
@@ -129,19 +129,21 @@ class ApplicationModel {
      This method expects sorted array as input parameter.
      Otherwise every value in this dictionary should be sorted afterwords.
      */
-    private static func convertEmployeesSortedArrayToSortedDictionary(employeesSortedArray:[Employee]) -> [Character:[Employee]] {
-        var dictionary:[Character:[Employee]] = [:]
+    private static func convertEmployeesSortedArrayToSortedDictionary(employeesSortedArray:[Employee]) -> [EmployeePosition:[Employee]] {
+
+        var dictionary:[EmployeePosition:[Employee]] = [:]
+
         for employee in employeesSortedArray {
-            guard let lastName = employee.lastName, let letter = lastName.first else {
+            guard let position = employee.position else {
                 assertionFailure()
                 continue
             }
 
-            if dictionary[letter] != nil {
-                dictionary[letter]?.append(employee)
+            if dictionary[position] != nil {
+                dictionary[position]?.append(employee)
             }
             else {
-                dictionary[letter] = [employee]
+                dictionary[position] = [employee]
             }
         }
         return dictionary
@@ -238,7 +240,7 @@ extension ApplicationModel: DataProvider {
     }
 
     
-    var sortedEmployees: [Character : [Employee]] {
+    var sortedEmployees: [EmployeePosition : [Employee]] {
         return employeesReadWriteQueue.sync {
             return ApplicationModel.convertEmployeesSortedArrayToSortedDictionary(employeesSortedArray: self.employeesSortedArray)
         }

@@ -18,7 +18,7 @@ class EmployeesTableViewController: UITableViewController {
     private static let viewControllerTitle = NSLocalizedString("Employees", comment: "view controller title")
 
     private let dataProvider: DataProvider
-    fileprivate var employees: [Character:[Employee]] {
+    fileprivate var employees: [EmployeePosition:[Employee]] {
         didSet {
             if employees.count > 0 {
                 DispatchQueue.main.async { [weak self] in
@@ -89,7 +89,7 @@ class EmployeesTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 
-        guard let targetCharacter = key(forSection: section) else {
+        guard let targetPosition = key(forSection: section) else {
             assertionFailure()
             return nil
         }
@@ -99,7 +99,7 @@ class EmployeesTableViewController: UITableViewController {
             return nil
         }
 
-        employeeTableHeaderView.character = targetCharacter
+        employeeTableHeaderView.headerTitle = targetPosition.description
         return employeeTableHeaderView
     }
 
@@ -165,7 +165,7 @@ class EmployeesTableViewController: UITableViewController {
         employees = dataProvider.sortedEmployees
     }
 
-    private func key(forSection section: Int) -> Character? {
+    private func key(forSection section: Int) -> EmployeePosition? {
         let sortedKeysArray = employees.keys.sorted()
         if sortedKeysArray.count <= section {
             assertionFailure()
