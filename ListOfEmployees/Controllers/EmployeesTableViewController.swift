@@ -58,16 +58,13 @@ class EmployeesTableViewController: UITableViewController {
         setupStatusMessageView()
         view.backgroundColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
         updateDataFromDataProvider()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(employeesListDidChangeExternallyAction), name: .employeesListDidChangeExternally, object: nil)
-        tableView.refreshControl?.beginRefreshing()
         requestDataFromDataProvider()
+        tableView.refreshControl?.beginRefreshing()
+        NotificationCenter.default.addObserver(self, selector: #selector(employeesListDidChangeExternallyAction), name: .employeesListDidChangeExternally, object: nil)
         if employees.count == 0 {
             tableView.backgroundView = PlaceholderView()
         }
+
     }
 
     // MARK: - Table view data source -
@@ -122,6 +119,7 @@ class EmployeesTableViewController: UITableViewController {
         }
         let employeeDetailsViewController = EmployeeDetailsViewController.init(for: employee)
         navigationController?.pushViewController(employeeDetailsViewController, animated: true)
+        navigationController?.navigationBar.tintColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 1)
     }
 
     // MARK: - Private methods -
@@ -264,10 +262,9 @@ extension EmployeesTableViewController: EmployeeTableViewCellDelegate {
                 return
             }
             DispatchQueue.main.async {
-                let viewController = ContactCardViewController.init(for: contact)
-                let navigationController = UINavigationController.init(rootViewController: viewController)
-
-                self.present(navigationController, animated: true, completion: nil)
+                let viewController = CNContactViewController(for: contact)
+                self.navigationController?.pushViewController(viewController, animated: true)
+                viewController.navigationController?.navigationBar.tintColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
             }
         }
     }
