@@ -175,13 +175,13 @@ class ApplicationModel {
             }
             // We save the property only if acess to contacts is granted by the user
             strongSelf.contactsStore = contactsStore
-            NotificationCenter.default.addObserver(strongSelf, selector: #selector(strongSelf.contactsStoreDidChange), name: Notification.Name.CNContactStoreDidChange, object: nil)
+            NotificationCenter.default.addObserver(strongSelf, selector: #selector(strongSelf.contactsStoreDidChangeAction), name: Notification.Name.CNContactStoreDidChange, object: nil)
             // We should read data again to match employees with contacts list
             completionHandler()
         }
     }
 
-    @objc private func contactsStoreDidChange() {
+    @objc private func contactsStoreDidChangeAction() {
         persistentCacheStorage?.startReadingCacheData()
     }
 

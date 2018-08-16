@@ -55,12 +55,14 @@ class EmployeesTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        contactViewControllerProvider = self
+        updateDataFromDataProvider()
+        requestDataFromDataProvider()
+
         setupNavigationBar()
         setupTableView()
         setupSearchController()
         view.backgroundColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
-        updateDataFromDataProvider()
-        requestDataFromDataProvider()
         tableView.refreshControl?.beginRefreshing()
         NotificationCenter.default.addObserver(self, selector: #selector(employeesListDidChangeExternallyAction), name: .employeesListDidChangeExternally, object: nil)
         if employees.count == 0 {
@@ -128,7 +130,6 @@ class EmployeesTableViewController: UITableViewController {
         let employeeDetailsViewController = DetailsViewController(withEmployee: employee)
         employeeDetailsViewController.contactViewControllerProvider = self
         navigationController?.pushViewController(employeeDetailsViewController, animated: true)
-        navigationController?.navigationBar.tintColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 1)
     }
 
     // MARK: - Private methods -

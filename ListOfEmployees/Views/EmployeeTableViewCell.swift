@@ -38,6 +38,9 @@ class EmployeeTableViewCell: UITableViewCell {
     private let employeeNameLabel: UILabel = {
         let label = UILabel.init(frame: .zero)
         label.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.body)
+        label.numberOfLines = 1
+        label.minimumScaleFactor = 0.5
+        label.adjustsFontSizeToFitWidth = true
         label.textColor = .black
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
