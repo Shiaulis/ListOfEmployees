@@ -24,6 +24,7 @@
 		0961AFF22123D74A004B73EB /* EmployeeDetailsViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0961AFF12123D74A004B73EB /* EmployeeDetailsViewCell.swift */; };
 		09BDF0F5212481DC004E84DC /* StatusMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BDF0F4212481DC004E84DC /* StatusMessageView.swift */; };
 		09C5ECE82120736900BB4FF5 /* EmployeesTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C5ECE72120736900BB4FF5 /* EmployeesTableHeaderView.swift */; };
+		09E9BAD821253738007B32D5 /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E9BAD721253738007B32D5 /* DetailsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,7 @@
 		0961AFF12123D74A004B73EB /* EmployeeDetailsViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeeDetailsViewCell.swift; sourceTree = "<group>"; };
 		09BDF0F4212481DC004E84DC /* StatusMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusMessageView.swift; sourceTree = "<group>"; };
 		09C5ECE72120736900BB4FF5 /* EmployeesTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeesTableHeaderView.swift; sourceTree = "<group>"; };
+		09E9BAD721253738007B32D5 /* DetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +130,7 @@
 			children = (
 				0904F24C211F184900A7B8B0 /* EmployeesTableViewController.swift */,
 				0961AFEF2123D2E8004B73EB /* EmployeeDetailsViewController.swift */,
+				09E9BAD721253738007B32D5 /* DetailsViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -213,6 +216,7 @@
 				09C5ECE82120736900BB4FF5 /* EmployeesTableHeaderView.swift in Sources */,
 				0904F202211DD79A00A7B8B0 /* AppDelegate.swift in Sources */,
 				0904F24B211ECE7D00A7B8B0 /* Errors.swift in Sources */,
+				09E9BAD821253738007B32D5 /* DetailsViewController.swift in Sources */,
 				0904F221211DF20700A7B8B0 /* Employee.swift in Sources */,
 				0904F24D211F184900A7B8B0 /* EmployeesTableViewController.swift in Sources */,
 				0904F21D211DF0EB00A7B8B0 /* DataMapper.swift in Sources */,

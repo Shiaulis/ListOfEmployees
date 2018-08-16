@@ -120,7 +120,7 @@ class EmployeesTableViewController: UITableViewController {
             assertionFailure()
             return
         }
-        let employeeDetailsViewController = EmployeeDetailsViewController.init(for: employee)
+        let employeeDetailsViewController = DetailsViewController(withEmployee: employee)
         navigationController?.pushViewController(employeeDetailsViewController, animated: true)
         navigationController?.navigationBar.tintColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 1)
     }
