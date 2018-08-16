@@ -9,6 +9,10 @@
 import UIKit
 import ContactsUI
 
+protocol ContactViewControllerProvider: class {
+    func openContactViewController(for: Employee)
+}
+
 class EmployeesTableViewController: UITableViewController {
 
     // MARK: - Properties -
@@ -18,6 +22,7 @@ class EmployeesTableViewController: UITableViewController {
 
     // Data
     private let dataProvider: DataProvider
+    private weak var contactViewControllerProvider: ContactViewControllerProvider?
     fileprivate var employees: [EmployeePosition:[Employee]] {
         didSet {
             if employees.count > 0 {
@@ -121,6 +126,7 @@ class EmployeesTableViewController: UITableViewController {
             return
         }
         let employeeDetailsViewController = DetailsViewController(withEmployee: employee)
+        employeeDetailsViewController.contactViewControllerProvider = self
         navigationController?.pushViewController(employeeDetailsViewController, animated: true)
         navigationController?.navigationBar.tintColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 1)
     }
@@ -255,22 +261,12 @@ extension EmployeesTableViewController: EmployeeTableViewCellDelegate {
             return
         }
 
-        guard let employee = getEmployee(forIndexPath: tappedIndexPath),
-            let identifier = employee.contactsCardIdentifier else {
+        guard let employee = getEmployee(forIndexPath: tappedIndexPath) else {
                 assertionFailure()
                 return
         }
-        dataProvider.fetchContact(forIdentifier: identifier, keyDescriptor: CNContactViewController.descriptorForRequiredKeys()) { (contact) in
-            guard let contact = contact else {
-                assertionFailure()
-                return
-            }
-            DispatchQueue.main.async {
-                let viewController = CNContactViewController(for: contact)
-                self.navigationController?.pushViewController(viewController, animated: true)
-                viewController.navigationController?.navigationBar.tintColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
-            }
-        }
+
+        contactViewControllerProvider?.openContactViewController(for: employee)
     }
 }
 
@@ -287,5 +283,26 @@ extension EmployeesTableViewController: UISearchResultsUpdating {
 extension EmployeesTableViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         tableView.tableHeaderView = nil
+    }
+}
+
+extension EmployeesTableViewController: ContactViewControllerProvider {
+    func openContactViewController(for employee: Employee) {
+        guard let identifier = employee.contactsCardIdentifier else {
+                assertionFailure()
+                return
+        }
+
+        dataProvider.fetchContact(forIdentifier: identifier, keyDescriptor: CNContactViewController.descriptorForRequiredKeys()) { (contact) in
+            guard let contact = contact else {
+                assertionFailure()
+                return
+            }
+            DispatchQueue.main.async {
+                let viewController = CNContactViewController(for: contact)
+                self.navigationController?.pushViewController(viewController, animated: true)
+                viewController.navigationController?.navigationBar.tintColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
+            }
+        }
     }
 }
