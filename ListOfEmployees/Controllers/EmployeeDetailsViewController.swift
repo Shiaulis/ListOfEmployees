@@ -15,7 +15,7 @@ class EmployeeDetailsViewController: UIViewController {
     private let employee: Employee
     weak var contactViewControllerProvider: ContactViewControllerProvider?
 
-    private lazy var imageView: UIImageView = {
+    private lazy var personImageView: UIImageView = {
         let imaveView = UIImageView.init(image: #imageLiteral(resourceName: "PersonIcom"))
         imaveView.contentMode = .scaleAspectFit
         imaveView.translatesAutoresizingMaskIntoConstraints = false
@@ -81,17 +81,17 @@ class EmployeeDetailsViewController: UIViewController {
     private func setupViews() {
 
 
-        view.addSubview(imageView)
-        imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24).isActive = true
-        imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        imageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.4).isActive = true
-        imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
+        view.addSubview(personImageView)
+        personImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24).isActive = true
+        personImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        personImageView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.2).isActive = true
+        personImageView.widthAnchor.constraint(equalTo: personImageView.heightAnchor).isActive = true
 
         personNameLabel.text = employee.fullName
         view.addSubview(personNameLabel)
         personNameLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32).isActive = true
         personNameLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32).isActive = true
-        personNameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8).isActive = true
+        personNameLabel.topAnchor.constraint(equalTo: personImageView.bottomAnchor, constant: 8).isActive = true
 
         // Bottom view is used to show the lowest view which can be used for
         // creating proper constraint
