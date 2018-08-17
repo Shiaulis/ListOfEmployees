@@ -127,7 +127,7 @@ class EmployeesTableViewController: UITableViewController {
             assertionFailure()
             return
         }
-        let employeeDetailsViewController = DetailsViewController(withEmployee: employee)
+        let employeeDetailsViewController = EmployeeDetailsViewController(withEmployee: employee)
         employeeDetailsViewController.contactViewControllerProvider = self
         navigationController?.pushViewController(employeeDetailsViewController, animated: true)
     }
