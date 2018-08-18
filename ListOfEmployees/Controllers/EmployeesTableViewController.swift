@@ -117,7 +117,14 @@ class EmployeesTableViewController: UITableViewController {
         }
 
         if searchBarIsEmpty() == false {
-            let title = NSLocalizedString("Found \(filteredEmployees.count) employees", comment: "header for search results")
+            let foundEmployeesCount = filteredEmployees.count
+            let title: String
+            if foundEmployeesCount == 1 {
+                title = NSLocalizedString("Found \(filteredEmployees.count) employee", comment: "header for search results")
+            }
+            else {
+                title = NSLocalizedString("Found \(filteredEmployees.count) employees", comment: "header for search results")
+            }
             employeeTableHeaderView.headerTitle = title
             return employeeTableHeaderView
         }
