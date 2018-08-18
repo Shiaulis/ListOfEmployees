@@ -20,6 +20,14 @@ class EmployeesTableViewController: UITableViewController {
     private static let cellId = "EmployeesTableViewControllerCellId"
     private static let headerId = "EmployeesTableViewControllerHeaderId"
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return UIStatusBarStyle.lightContent
+    }
+
+    override var childViewControllerForStatusBarStyle: UIViewController? {
+        return self
+    }
+
     // Data
     private let dataProvider: DataProvider
     private weak var contactViewControllerProvider: ContactViewControllerProvider?
@@ -63,12 +71,17 @@ class EmployeesTableViewController: UITableViewController {
         setupTableView()
         setupSearchController()
         view.backgroundColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
-        tableView.refreshControl?.beginRefreshing()
         NotificationCenter.default.addObserver(self, selector: #selector(employeesListDidChangeExternallyAction), name: .employeesListDidChangeExternally, object: nil)
         if employees.count == 0 {
             tableView.backgroundView = PlaceholderView()
         }
+    }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Because the CNContactViewController has different tint color
+        // we should return it back to global value
+        navigationController?.navigationBar.tintColor = .white
     }
 
     // MARK: - Table view data source -
@@ -161,7 +174,7 @@ class EmployeesTableViewController: UITableViewController {
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = NSLocalizedString("Search employee…", comment: "search placeholder")
         searchController.searchBar.tintColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 1)
-        searchController.searchBar.barTintColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
+        searchController.searchBar.barTintColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
         definesPresentationContext = true
 
     }
@@ -178,7 +191,9 @@ class EmployeesTableViewController: UITableViewController {
     }
 
     @objc private func searchButtonAction() {
-        tableView.tableHeaderView = searchController.searchBar
+        navigationItem.searchController = searchController
+        navigationItem.searchController?.isActive = true
+        navigationItem.searchController?.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.becomeFirstResponder()
         searchController.searchBar.delegate = self
     }
@@ -285,7 +300,8 @@ extension EmployeesTableViewController: UISearchResultsUpdating {
 
 extension EmployeesTableViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        tableView.tableHeaderView = nil
+        navigationItem.searchController?.isActive = false
+        navigationItem.searchController = nil
     }
 }
 
