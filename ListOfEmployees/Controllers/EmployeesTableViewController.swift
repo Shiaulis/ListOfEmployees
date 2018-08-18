@@ -20,14 +20,6 @@ class EmployeesTableViewController: UITableViewController {
     private static let cellId = "EmployeesTableViewControllerCellId"
     private static let headerId = "EmployeesTableViewControllerHeaderId"
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return UIStatusBarStyle.lightContent
-    }
-
-    override var childViewControllerForStatusBarStyle: UIViewController? {
-        return self
-    }
-
     // Data
     private let dataProvider: DataProvider
     private weak var contactViewControllerProvider: ContactViewControllerProvider?
@@ -70,7 +62,7 @@ class EmployeesTableViewController: UITableViewController {
         setupNavigationBar()
         setupTableView()
         setupSearchController()
-        view.backgroundColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
+        view.backgroundColor = .white
         NotificationCenter.default.addObserver(self, selector: #selector(employeesListDidChangeExternallyAction), name: .employeesListDidChangeExternally, object: nil)
         if employees.count == 0 {
             tableView.backgroundView = PlaceholderView()
@@ -119,15 +111,23 @@ class EmployeesTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 
+        guard let employeeTableHeaderView = tableView.dequeueReusableHeaderFooterView(withIdentifier: EmployeesTableViewController.headerId) as? EmployeesTableHeaderView else {
+            assertionFailure()
+            return nil
+        }
+
+        if searchBarIsEmpty() == false {
+            let title = NSLocalizedString("Found \(filteredEmployees.count) employees", comment: "header for search results")
+            employeeTableHeaderView.headerTitle = title
+            return employeeTableHeaderView
+        }
+
         guard let targetPosition = key(forSection: section) else {
             assertionFailure()
             return nil
         }
 
-        guard let employeeTableHeaderView = tableView.dequeueReusableHeaderFooterView(withIdentifier: EmployeesTableViewController.headerId) as? EmployeesTableHeaderView else {
-            assertionFailure()
-            return nil
-        }
+
 
         employeeTableHeaderView.headerTitle = targetPosition.description
         return employeeTableHeaderView
@@ -160,13 +160,15 @@ class EmployeesTableViewController: UITableViewController {
         tableView.register(EmployeeTableViewCell.self, forCellReuseIdentifier: EmployeesTableViewController.cellId)
         tableView.register(EmployeesTableHeaderView.self, forHeaderFooterViewReuseIdentifier: EmployeesTableViewController.headerId)
         tableView.rowHeight = UITableViewAutomaticDimension;
+
         // We extend our custom header view to screen bounds on devices with safe area
         tableView.insetsContentViewsToSafeArea = false
         tableView.refreshControl = UIRefreshControl()
-        tableView.refreshControl?.tintColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 1)
+        tableView.refreshControl?.tintColor = .white
         tableView.refreshControl?.attributedTitle = NSAttributedString(string: "Fetch data from remote server",
-                                                                       attributes: [NSAttributedStringKey.foregroundColor : #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)])
+                                                                       attributes: [NSAttributedStringKey.foregroundColor : UIColor.white])
         tableView.refreshControl?.addTarget(self, action: #selector(refreshControlAction), for: .valueChanged)
+        tableView.tableFooterView = UIView()
     }
 
     private func setupSearchController() {
@@ -204,7 +206,7 @@ class EmployeesTableViewController: UITableViewController {
     @objc private func searchButtonAction() {
         navigationItem.searchController = searchController
         navigationItem.searchController?.isActive = true
-        navigationItem.searchController?.hidesNavigationBarDuringPresentation = false
+        navigationItem.searchController?.hidesNavigationBarDuringPresentation = true
         searchController.searchBar.becomeFirstResponder()
         searchController.searchBar.delegate = self
     }
