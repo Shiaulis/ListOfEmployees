@@ -176,7 +176,18 @@ class EmployeesTableViewController: UITableViewController {
         searchController.searchBar.tintColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 1)
         searchController.searchBar.barTintColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
         definesPresentationContext = true
+    }
 
+    private func presentGenericErrorAlert() {
+        let alert = UIAlertController(title: NSLocalizedString("Error", comment: "alert title"),
+                                      message: NSLocalizedString("Failed to fetch data from remote server", comment: "alert message"),
+                                      preferredStyle: .alert)
+        let alertOKAction = UIAlertAction(title: NSLocalizedString("OK", comment: "alert button"),
+                                          style: .default) { (okAction) in
+                                            self.tableView.refreshControl?.endRefreshing()
+        }
+        alert.addAction(alertOKAction)
+        present(alert, animated: true, completion:nil)
     }
 
     @objc private func refreshControlAction() {
@@ -200,9 +211,11 @@ class EmployeesTableViewController: UITableViewController {
 
     private func requestDataFromDataProvider() {
         dataProvider.updateData { [weak self] (error) in
-            if let error = error {
-                print(error.localizedDescription)
-
+            if error != nil {
+                DispatchQueue.main.async { [weak self] in
+                    self?.presentGenericErrorAlert()
+                }
+                return
             }
             self?.updateDataFromDataProvider()
             DispatchQueue.main.async { [weak self] in
