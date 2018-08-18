@@ -147,6 +147,8 @@ class EmployeesTableViewController: UITableViewController {
         tableView.register(EmployeeTableViewCell.self, forCellReuseIdentifier: EmployeesTableViewController.cellId)
         tableView.register(EmployeesTableHeaderView.self, forHeaderFooterViewReuseIdentifier: EmployeesTableViewController.headerId)
         tableView.rowHeight = UITableViewAutomaticDimension;
+        // We extend our custom header view to screen bounds on devices with safe area
+        tableView.insetsContentViewsToSafeArea = false
         tableView.refreshControl = UIRefreshControl()
         tableView.refreshControl?.tintColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 1)
         tableView.refreshControl?.attributedTitle = NSAttributedString(string: "Fetch data from remote server",
