@@ -134,8 +134,6 @@ class EmployeesTableViewController: UITableViewController {
             return nil
         }
 
-
-
         employeeTableHeaderView.headerTitle = targetPosition.description
         return employeeTableHeaderView
     }
@@ -184,7 +182,7 @@ class EmployeesTableViewController: UITableViewController {
         searchController.searchBar.placeholder = NSLocalizedString("Search employee…", comment: "search placeholder")
         searchController.searchBar.tintColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 1)
         searchController.searchBar.barTintColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
-        definesPresentationContext = true
+        searchController.definesPresentationContext = true
     }
 
     private func presentGenericErrorAlert() {
