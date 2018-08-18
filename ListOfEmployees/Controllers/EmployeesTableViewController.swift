@@ -212,8 +212,8 @@ class EmployeesTableViewController: UITableViewController {
         navigationItem.searchController = searchController
         navigationItem.searchController?.isActive = true
         navigationItem.searchController?.hidesNavigationBarDuringPresentation = true
-        searchController.searchBar.becomeFirstResponder()
         searchController.searchBar.delegate = self
+        searchController.delegate = self
     }
 
     private func requestDataFromDataProvider() {
@@ -322,6 +322,14 @@ extension EmployeesTableViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         navigationItem.searchController?.isActive = false
         navigationItem.searchController = nil
+    }
+}
+
+extension EmployeesTableViewController: UISearchControllerDelegate {
+    func didPresentSearchController(_ searchController: UISearchController) {
+        DispatchQueue.main.async {
+            searchController.searchBar.becomeFirstResponder()
+        }
     }
 }
 
