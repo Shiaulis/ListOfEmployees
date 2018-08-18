@@ -14,7 +14,7 @@ Swift 4.1
 Clone the repository
 
 ```
-https://github.com/Shiaulis/ListOfEmployees.git
+git clone https://github.com/Shiaulis/ListOfEmployees.git
 ```
 
 Open **ListOfEmployees.xcodeproj** file.
