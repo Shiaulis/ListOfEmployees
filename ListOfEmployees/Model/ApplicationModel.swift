@@ -173,7 +173,7 @@ class ApplicationModel {
                 assertionFailure()
                 return
             }
-            // We save the property only if acess to contacts is granted by the user
+            // Contact store property is not nil if only acess to contacts is granted by the user
             strongSelf.contactsStore = contactsStore
             NotificationCenter.default.addObserver(strongSelf, selector: #selector(strongSelf.contactsStoreDidChangeAction), name: Notification.Name.CNContactStoreDidChange, object: nil)
             // We should read data again to match employees with contacts list
