@@ -31,7 +31,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
 
         applicationModel.setup()
-        applicationModel.fetchRemoteData(completionHandler: nil)
         applicationModel.startRestoringDataFromPersistentStorageIfPossible()
         
         return true;
