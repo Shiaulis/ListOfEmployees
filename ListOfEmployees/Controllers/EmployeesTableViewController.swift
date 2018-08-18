@@ -164,9 +164,9 @@ class EmployeesTableViewController: UITableViewController {
         // We extend our custom header view to screen bounds on devices with safe area
         tableView.insetsContentViewsToSafeArea = false
         tableView.refreshControl = UIRefreshControl()
-        tableView.refreshControl?.tintColor = .white
+        tableView.refreshControl?.tintColor = .black
         tableView.refreshControl?.attributedTitle = NSAttributedString(string: "Fetch data from remote server",
-                                                                       attributes: [NSAttributedStringKey.foregroundColor : UIColor.white])
+                                                                       attributes: [NSAttributedStringKey.foregroundColor : UIColor.black])
         tableView.refreshControl?.addTarget(self, action: #selector(refreshControlAction), for: .valueChanged)
         tableView.tableFooterView = UIView()
     }
