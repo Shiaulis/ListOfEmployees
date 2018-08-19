@@ -19,11 +19,18 @@ class EmployeeTableViewCell: UITableViewCell {
     // MARK: - Properties -
 
     // Data
-
-    var employee: Employee? {
+    var title: String? {
         didSet {
-            employeeNameLabel.text = employee?.fullName
-            if employee?.contactsCardIdentifier != nil {
+            employeeNameLabel.text = title
+        }
+    }
+
+    var shouldPresentContactCardButton: Bool {
+        didSet {
+            // This expression also can be written as just
+            // contactCardButton.isHidden = ! shouldPresentContactCardButton
+            // but this form looks more clear for me
+            if shouldPresentContactCardButton {
                 contactCardButton.isHidden = false
             }
             else {
@@ -32,7 +39,7 @@ class EmployeeTableViewCell: UITableViewCell {
         }
     }
 
-    weak var delegate: EmployeeTableViewCellDelegate?
+    weak var contactButtonDelegate: EmployeeTableViewCellDelegate?
 
     // UI
     private let employeeNameLabel: UILabel = {
@@ -56,6 +63,7 @@ class EmployeeTableViewCell: UITableViewCell {
     // MARK: - Initialization -
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        self.shouldPresentContactCardButton = false
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews()
     }
@@ -64,33 +72,24 @@ class EmployeeTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - UITableViewCell methods -
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-    }
-
     // MARK: - Private methods -
 
-    func setupViews() {
+    private func setupViews() {
         contentView.addSubview(employeeNameLabel)
         contentView.addSubview(contactCardButton)
 
-        let safeArea = contentView.safeAreaLayoutGuide
-
         contactCardButton.heightAnchor.constraint(equalToConstant: 30.0).isActive = true
         contactCardButton.widthAnchor.constraint(equalTo: contactCardButton.heightAnchor).isActive = true
-        contactCardButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20).isActive = true
+        contactCardButton.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -20).isActive = true
         contactCardButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
 
         employeeNameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
-        employeeNameLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16).isActive = true
+        employeeNameLabel.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
 
-        contactCardButton.isHidden = true
         contactCardButton.addTarget(self, action: #selector(contactCardButtonAction), for: .touchUpInside)
     }
 
-    @objc func contactCardButtonAction(sender: UIButton) {
-        delegate?.contactCardButtonTapped(sender: self)
+    @objc private func contactCardButtonAction(sender: UIButton) {
+        contactButtonDelegate?.contactCardButtonTapped(sender: self)
     }
 }

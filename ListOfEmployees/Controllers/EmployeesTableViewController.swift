@@ -104,8 +104,18 @@ class EmployeesTableViewController: UITableViewController {
             return cell
         }
 
-        employeeCell.delegate = self
-        employeeCell.employee = employee
+        employeeCell.title = employee.fullName
+        if employee.contactsCardIdentifier != nil {
+            employeeCell.shouldPresentContactCardButton = true
+            employeeCell.contactButtonDelegate = self
+        }
+        else {
+            // This action is needed because the cell could be
+            // already used by another employee and the flag
+            // could be already set as true
+            employeeCell.shouldPresentContactCardButton = false
+            employeeCell.contactButtonDelegate = nil
+        }
         return employeeCell
     }
 
