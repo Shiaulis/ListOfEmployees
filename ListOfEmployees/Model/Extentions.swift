@@ -22,14 +22,3 @@ extension OSLog {
 extension Notification.Name {
     static let employeesListDidChangeExternally = Notification.Name.init("employeesListDidChangeExternally")
 }
-
-extension UIView {
-    func addConstraints(withVisualFormat visualFormat: String, views: UIView...) {
-        var viewsDictionary: Dictionary<String, UIView> = [:]
-        for (index, view) in views.enumerated() {
-            let key = "v\(index)"
-            viewsDictionary[key] = view
-        }
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: visualFormat, options: NSLayoutFormatOptions(), metrics: nil, views: viewsDictionary))
-    }
-}
