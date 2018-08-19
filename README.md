@@ -1,13 +1,13 @@
 # List Of Employees
 
 The small application that provides a list of employees from remote URLs and gives an ability to see the employees details.
-**Disclamer:** All information in this data set are randomly generated.
+**Disclamer:** All information in this data set are dynamic and randomly generated.
 
 ### Prerequisites
 
-iOS 11.4
-Xcode 9.4.1
-Swift 4.1
+* iOS 11.4
+* Xcode 9.4.1
+* Swift 4.1
 
 ### Installing
 
@@ -32,10 +32,10 @@ All data from model is passed to UI by **DataProvider** protocol.
 All model classes work asynchronously on non-main queues to prevent any influence to UI.
 
 The main UI class is **EmpoyeesListViewController**. It shows list of employees. Also it provides:
-Pull to refresh action that gives an ability to get the newest data from servers.
-Search that can filter employees list by given word.
-Ability to open the employee card for more information.
-Ability to open card from Contacts if it matches.
+* Pull to refresh action that gives an ability to get the newest data from servers.
+* Search that can filter employees list by given word.
+* Ability to open the employee card for more information.
+* Ability to open card from Contacts if it matches.
 
 **EmployeeDetailsViewController** provides an access to all data received from employee card. Also it gives an ability to open card from Contacts if employee is found in Contacts list.
 
@@ -51,7 +51,7 @@ Ability to open card from Contacts if it matches.
 
 ### Things that also should be done:
 
-* Add unit tests for every model class. They also should use more protocol to have an ability mock every other dependency.
+* Add unit tests for every model class. This classes also should use more protocol to have an ability mock each other dependency.
 * Add UI tests to check the controllers.
 * Add more flexible error states handling (throwing more errors, reporting to the user about fault application states like inaccessible cache).
 * Implement some unique identifier for each employee to prevent duplicates (contact with the same ID should be merged)
@@ -64,8 +64,6 @@ Ability to open card from Contacts if it matches.
 * Contacts button in Details View should react on change in user contacts.
 * Check app for accessibility features (color accommodation,  dynamic fonts etc.)
 * Add logs to View Controllers.
-
-
 
 
 ## License
