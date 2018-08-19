@@ -15,12 +15,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private let window: UIWindow
     private let applicationModel: ApplicationModel
-    
 
     // MARK: - Initialization -
 
     override init() {
-        NSLog("TEST: App started")
         self.window = UIWindow.init(frame: UIScreen.main.bounds)
         self.applicationModel = ApplicationModel.init()
         super.init()
@@ -29,7 +27,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - UIApplicationDelegate methods
 
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
-
         applicationModel.setup()
         applicationModel.startRestoringDataFromPersistentStorageIfPossible()
         
@@ -37,7 +34,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
-
         let employeesTableViewController = EmployeesTableViewController.init(usingDataProvider: applicationModel)
         let navigationController = UINavigationController.init(rootViewController: employeesTableViewController)
         navigationController.navigationBar.tintColor = .white
@@ -47,4 +43,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 }
-

@@ -11,7 +11,7 @@ import os.log
 import Contacts
 
 /**
-    Protocol describes an interface from model to UI
+    Protocol describes application model interface
 */
 protocol DataProvider {
     var sortedEmployees:[EmployeePosition: [Employee]] { get }
@@ -32,14 +32,15 @@ class ApplicationModel {
     ["http://tallinn.jobapp.aw.ee/employee_list",
      "http://tartu.jobapp.aw.ee/employee_list"]
 
-    fileprivate static let logger = OSLog.init(subsystem: LogSubsystem.applicationModel, object: ApplicationModel.self)
+    static private let logger = OSLog.init(subsystem: LogSubsystem.applicationModel, object: ApplicationModel.self)
 
     // MARK: Private properties
-    fileprivate let employeesReadWriteQueue: DispatchQueue
+
     // Services
     private let persistentCacheStorage: PersistentCacheStorage?
     private let dataMapper: DataMapper
     private var contactsStore: CNContactStore?
+    fileprivate let employeesReadWriteQueue: DispatchQueue
     // Data
     private let dataSourceURLs: [URL]
     fileprivate var employeesSortedArray: [Employee]
@@ -47,7 +48,7 @@ class ApplicationModel {
     // MARK: - Initialization -
 
     init() {
-        // This queue provides ability to read/write data synchronously without readler-writer problem
+        // The queue provides an ability to read/write data synchronously to avoid reader-writer problem
         self.employeesReadWriteQueue = DispatchQueue(label: "com.shiaulis.ListOfEmployees.employeesReadWriteQueue",
                                                      qos: .userInitiated)
 
@@ -80,6 +81,8 @@ class ApplicationModel {
         remoteDataFetcher?.fetchRemoteData(fromURLs: self.dataSourceURLs,
                                            queue: DispatchQueue.global(qos: .userInitiated),
                                            completionHandler: { (dataObjects, responses, errors) in
+            // To capture remoteDataFetcher inside the block we use
+            // its variable inside the block.
             remoteDataFetcher = nil
             if errors.count > 0 {
                 for error in errors {
@@ -101,12 +104,12 @@ class ApplicationModel {
             }
 
             os_log("Remote data fetched succesfully", log: ApplicationModel.logger, type: .default)
-            self.dataMapper.parse(datas: dataObjects, usingContacts: self.contactsStore) { [weak self] (error, employees) in
+            self.dataMapper.parse(dataObjects: dataObjects, usingContacts: self.contactsStore) { [weak self] (error, employees) in
                 guard let strongSelf = self else {
                     assertionFailure()
                     return
                 }
-                strongSelf.persistentCacheStorage?.cache(datas: dataObjects)
+                strongSelf.persistentCacheStorage?.cache(dataObjects: dataObjects)
                 guard let employeesArray = employees else {
                     assertionFailure()
                     return
@@ -119,10 +122,13 @@ class ApplicationModel {
         })
     }
 
-
     func startRestoringDataFromPersistentStorageIfPossible() {
         if let persistentStorage = persistentCacheStorage, persistentStorage.isDataCached {
+            os_log("Start restoring data from cache", log: ApplicationModel.logger, type: .debug)
             persistentCacheStorage?.startReadingCacheData()
+        }
+        else {
+            os_log("Data from cache cannot be retreived. Cache not available", log: ApplicationModel.logger, type: .error)
         }
     }
 
@@ -133,7 +139,6 @@ class ApplicationModel {
      Otherwise every value in this dictionary should be sorted afterwords.
      */
     private static func convertEmployeesSortedArrayToSortedDictionary(employeesSortedArray:[Employee]) -> [EmployeePosition:[Employee]] {
-
         var dictionary:[EmployeePosition:[Employee]] = [:]
 
         for employee in employeesSortedArray {
@@ -182,6 +187,7 @@ class ApplicationModel {
     }
 
     @objc private func contactsStoreDidChangeAction() {
+        // We should read data again to match employees with contacts list if any changes will be made in contacts database
         persistentCacheStorage?.startReadingCacheData()
     }
 
@@ -212,9 +218,9 @@ extension ApplicationModel: PersistentCacheStorageDelegate {
                error?.localizedDescription ?? "")
     }
 
-    func cachedDataIsReadedSuccessfully(datas: [Data]) {
+    func cachedDataIsReadedSuccessfully(dataObjects: [Data]) {
         os_log("Data read from cache successfully", log: ApplicationModel.logger, type: .default)
-        self.dataMapper.parse(datas: datas, usingContacts: contactsStore) { [weak self] (error, employees) in
+        self.dataMapper.parse(dataObjects: dataObjects, usingContacts: contactsStore) { [weak self] (error, employees) in
             guard let employeesArray = employees else {
                 os_log("Failed to get employees from cached data", log: ApplicationModel.logger, type: .error)
                 return
@@ -265,7 +271,6 @@ extension ApplicationModel: DataProvider {
     func fetchContact(forIdentifier identifier: String, keyDescriptor: CNKeyDescriptor, completionHandler: @escaping (CNContact?) -> Void) {
         if let contactsStore = contactsStore {
             dataMapper.contact(forIdentifier: identifier, contactsStore: contactsStore, keyDescriptor: keyDescriptor, completionHandler: completionHandler)
-
         }
         else {
             os_log("Failed to get contact for identifier due to absense of contacts store", log: ApplicationModel.logger, type: .error)

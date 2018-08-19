@@ -10,7 +10,6 @@ import Foundation
 
 enum ApplicationModelError: Error {
     case dataFetchError
-    case stringToURLConvertError(String)
 }
 
 extension ApplicationModelError: LocalizedError {
@@ -18,12 +17,20 @@ extension ApplicationModelError: LocalizedError {
         switch self {
         case .dataFetchError:
             return NSLocalizedString("Failed to fetch data from remote server", comment: "error description")
-        case .stringToURLConvertError(let failedURLString):
-            return NSLocalizedString("Failed to get URL from string \(failedURLString)", comment: "error description")
         }
     }
 }
 
 enum PersistentCacheStorageError: Error {
     case createCacheDirectoryURLError
+}
+
+extension PersistentCacheStorageError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .createCacheDirectoryURLError:
+            return NSLocalizedString("Failed to initiate cache directory", comment: "error description")
+        }
+    }
+
 }

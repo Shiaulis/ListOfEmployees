@@ -12,21 +12,23 @@ import os.log
 protocol PersistentCacheStorageDelegate: class {
     func cachingDataFailed(withError: Error?)
     func cachingDataSucceeded()
-    func cachedDataIsReadedSuccessfully(datas: [Data])
+    func cachedDataIsReadedSuccessfully(dataObjects: [Data])
     func cachedDataReadingFailed(withError: Error?)
 }
 
 class PersistentCacheStorage {
 
     // MARK: - Properties -
+    static private let logger = OSLog.init(subsystem: LogSubsystem.applicationModel, object: PersistentCacheStorage.self)
+
     // Public
     weak var delegate: PersistentCacheStorageDelegate?
+    // Simple bool flag that shows whether data in cache ready to be read
     var isDataCached: Bool
     // Private
     private let dispatchQueue: DispatchQueue
     private let systemFileManager: FileManager
     private let destinationCacheDirectoryURL: URL
-    fileprivate static let logger = OSLog.init(subsystem: LogSubsystem.applicationModel, object: PersistentCacheStorage.self)
 
     // MARK: - Initialization -
 
@@ -51,7 +53,7 @@ class PersistentCacheStorage {
 
     // MARK: - Public methods -
 
-    func cache(datas: [Data]) {
+    func cache(dataObjects: [Data]) {
         self.isDataCached = false
         dispatchQueue.sync { [weak self] in
             guard let strongSelf = self else {
@@ -62,7 +64,7 @@ class PersistentCacheStorage {
             do {
                 try strongSelf.cleanCacheDirectory()
 
-                for (index, data) in datas.enumerated() {
+                for (index, data) in dataObjects.enumerated() {
                     let fileName = "data\(index)"
                     let url = strongSelf.destinationCacheDirectoryURL.appendingPathComponent(fileName)
                     try data.write(to: url)
@@ -89,12 +91,12 @@ class PersistentCacheStorage {
                 let contents = try strongSelf.systemFileManager.contentsOfDirectory(at: strongSelf.destinationCacheDirectoryURL,
                                                                                     includingPropertiesForKeys: nil,
                                                                                     options:.skipsHiddenFiles)
-                var datas: [Data] = []
+                var dataObjects: [Data] = []
                 for itemURL in contents {
                     let data = try Data.init(contentsOf: itemURL)
-                    datas.append(data)
+                    dataObjects.append(data)
                 }
-                strongSelf.delegate?.cachedDataIsReadedSuccessfully(datas: datas)
+                strongSelf.delegate?.cachedDataIsReadedSuccessfully(dataObjects: dataObjects)
             }
             catch {
                 strongSelf.delegate?.cachedDataReadingFailed(withError: error)

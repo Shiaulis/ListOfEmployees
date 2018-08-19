@@ -13,10 +13,10 @@ class RemoteDataFetcher {
 
     // MARK: - Properties -
 
+    static private let logger = OSLog.init(subsystem: LogSubsystem.applicationModel, object: RemoteDataFetcher.self)
     private var dataObjects: [Data]
     private var responses: [URLResponse]
     private var errors: [Error]
-    private static let logger = OSLog.init(subsystem: LogSubsystem.applicationModel, object: RemoteDataFetcher.self)
 
     // MARK: - Initialization -
 
@@ -35,6 +35,8 @@ class RemoteDataFetcher {
                 return
             }
             let urlSession = URLSession.init(configuration: .default)
+            // Dispatch group is used to implement synchronous waiting
+            // until all requests withing current DataFetcher will be finished
             let group = DispatchGroup.init()
             for url in urls {
                 group.enter()
@@ -90,7 +92,6 @@ class RemoteDataFetcher {
             strongSelf.dataObjects.append(data)
             strongSelf.responses.append(response)
             dispatchGroup.leave()
-
         }
     }
 
@@ -105,5 +106,3 @@ class RemoteDataFetcher {
         }
     }
 }
-
-

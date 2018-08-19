@@ -14,9 +14,10 @@ class DataMapper {
 
     // MARK: - Properties -
 
+    static private let logger = OSLog.init(subsystem: LogSubsystem.applicationModel, object: DataMapper.self)
+    
     private let queue: DispatchQueue
     private let decoder: JSONDecoder
-    private static let logger = OSLog.init(subsystem: LogSubsystem.applicationModel, object: DataMapper.self)
 
     // MARK: - Initialization -
 
@@ -25,7 +26,7 @@ class DataMapper {
         self.decoder = JSONDecoder.init()
     }
 
-    func parse(datas: [Data], usingContacts contactsStore: CNContactStore?, completionHandler:@escaping (Error?, [Employee]?) -> Void) {
+    func parse(dataObjects: [Data], usingContacts contactsStore: CNContactStore?, completionHandler:@escaping (Error?, [Employee]?) -> Void) {
         queue.async { [weak self] in
             guard let strongSelf = self else {
                 assertionFailure()
@@ -34,7 +35,7 @@ class DataMapper {
 
             do {
                 var employees: [Employee] = []
-                for data in datas {
+                for data in dataObjects {
                     let parsedEmployees = try strongSelf.decoder.decode(Json.self, from: data).employees
                     employees.append(contentsOf: parsedEmployees)
                 }
