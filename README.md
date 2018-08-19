@@ -25,7 +25,7 @@ Application works on MVP (Model-View-Presenter) design pattern.
 There are several model classes which don’t know anything about UI. There are several view controllers that manage the views and provide an interaction between views and model. Views visualize information and provide an interaction with user.
 
 The main model class is **Application Model** class. It initiates all model classes that are needed for app functionality:
-* **RemoteDataFetcher**. This class provides connection to remote server by given set of URLs. This class works on URLSession API and provides all data, responses and errors received from the remote servers. On every remote request Application Model creates separate RemoteDataFetcher class instance. 
+* **RemoteRequest**. This class provides connection to remote server by given set of URLs. This class works on URLSession API and provides all data, responses and errors received from the remote servers. On every remote request Application Model creates separate RemoteRequest class instance. 
 * **DataMapper** provides parsing of the received data and mapping to Employee structure. Also it provides contact identifier for each employee which it finds in the user’s contacts.
 * **PersistentCacheStorage** saves the data if it is correct and can be parsed by DataMapper and also provides cached data when it is needed. Unlike first two classes it works on delegate pattern and notifies Application model about its states by delegate callbacks.
 All data from model is passed to UI by **DataProvider** protocol.
@@ -51,7 +51,7 @@ The main UI class is **EmpoyeesListViewController**. It shows list of employees.
 
 ### Things that also should be done:
 
-* Add several attempts to retry request in RemoteDataFetcher class if it fails for the first time.
+* Add several attempts to retry request in RemoteRequest class if it fails for the first time.
 * Add unit tests for every model class. This classes also should use more protocol to have an ability mock each other dependency.
 * Add UI tests to check the controllers.
 * Add more flexible error states handling (throwing more errors, reporting to the user about fault application states like inaccessible cache).
