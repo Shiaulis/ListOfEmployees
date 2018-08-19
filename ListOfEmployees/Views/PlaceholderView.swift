@@ -33,6 +33,6 @@ class PlaceholderView: UILabel {
         font = UIFont.preferredFont(forTextStyle: .title1)
         lineBreakMode = .byWordWrapping
         numberOfLines = 0
-        textColor = UIColor.white.withAlphaComponent(0.5)
+        textColor = UIColor.lightGray
     }
 }
