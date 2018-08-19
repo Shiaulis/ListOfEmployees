@@ -56,6 +56,7 @@ The main UI class is **EmpoyeesListViewController**. It shows list of employees.
 * Add more flexible error states handling (throwing more errors, reporting to the user about fault application states like inaccessible cache).
 * Implement some unique identifier for each employee to prevent duplicates (contact with the same ID should be merged).
 * When an error is received from remote server error message should be shown as some popover message instead of alert that prevents user interaction until OK button is tapped.
+* Request access to contacts only after we have something to parse.
 
 * The main list while search should present what exactly is found by the given word.
 * Search bar colors should be more close to the application style (white field color with white placeholder).
@@ -64,6 +65,7 @@ The main UI class is **EmpoyeesListViewController**. It shows list of employees.
 * Contacts button in Details View should react on change in user contacts.
 * Check app for accessibility features (color accommodation,  dynamic fonts etc.).
 * Add logs to View Controllers.
+* Deactivate search button when the list is empty.
 * Localize app
 * Provide localized copy for info.plist
 
