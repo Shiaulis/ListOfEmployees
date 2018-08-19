@@ -20,8 +20,8 @@
 		0904F24D211F184900A7B8B0 /* EmployeesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F24C211F184900A7B8B0 /* EmployeesTableViewController.swift */; };
 		093F7F9A211F86FC0047F267 /* EmployeeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093F7F99211F86FC0047F267 /* EmployeeTableViewCell.swift */; };
 		095CCBF421220ECC00006A94 /* PlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095CCBF321220ECC00006A94 /* PlaceholderView.swift */; };
-		09BDF0F5212481DC004E84DC /* StatusMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BDF0F4212481DC004E84DC /* StatusMessageView.swift */; };
 		09C5ECE82120736900BB4FF5 /* EmployeesTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C5ECE72120736900BB4FF5 /* EmployeesTableHeaderView.swift */; };
+		09E1F3162129040B0049988C /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 09E1F3152129040B0049988C /* README.md */; };
 		09E9BAD821253738007B32D5 /* EmployeeDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E9BAD721253738007B32D5 /* EmployeeDetailsViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -41,8 +41,8 @@
 		0904F24C211F184900A7B8B0 /* EmployeesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeesTableViewController.swift; sourceTree = "<group>"; };
 		093F7F99211F86FC0047F267 /* EmployeeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeeTableViewCell.swift; sourceTree = "<group>"; };
 		095CCBF321220ECC00006A94 /* PlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderView.swift; sourceTree = "<group>"; };
-		09BDF0F4212481DC004E84DC /* StatusMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusMessageView.swift; sourceTree = "<group>"; };
 		09C5ECE72120736900BB4FF5 /* EmployeesTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeesTableHeaderView.swift; sourceTree = "<group>"; };
+		09E1F3152129040B0049988C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		09E9BAD721253738007B32D5 /* EmployeeDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeeDetailsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -90,6 +90,7 @@
 				0904F208211DD79B00A7B8B0 /* Assets.xcassets */,
 				0904F20A211DD79B00A7B8B0 /* LaunchScreen.storyboard */,
 				0904F20D211DD79B00A7B8B0 /* Info.plist */,
+				09E1F3152129040B0049988C /* README.md */,
 			);
 			path = "Supporting Files";
 			sourceTree = "<group>";
@@ -115,7 +116,6 @@
 				093F7F99211F86FC0047F267 /* EmployeeTableViewCell.swift */,
 				09C5ECE72120736900BB4FF5 /* EmployeesTableHeaderView.swift */,
 				095CCBF321220ECC00006A94 /* PlaceholderView.swift */,
-				09BDF0F4212481DC004E84DC /* StatusMessageView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -187,6 +187,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				09E1F3162129040B0049988C /* README.md in Resources */,
 				0904F20C211DD79B00A7B8B0 /* LaunchScreen.storyboard in Resources */,
 				0904F209211DD79B00A7B8B0 /* Assets.xcassets in Resources */,
 			);
@@ -203,7 +204,6 @@
 				0904F247211E3A2100A7B8B0 /* PersistentCacheStorage.swift in Sources */,
 				0904F219211DF05A00A7B8B0 /* ApplicationModel.swift in Sources */,
 				0904F21F211DF1E900A7B8B0 /* RemoteDataFether.swift in Sources */,
-				09BDF0F5212481DC004E84DC /* StatusMessageView.swift in Sources */,
 				093F7F9A211F86FC0047F267 /* EmployeeTableViewCell.swift in Sources */,
 				09C5ECE82120736900BB4FF5 /* EmployeesTableHeaderView.swift in Sources */,
 				0904F202211DD79A00A7B8B0 /* AppDelegate.swift in Sources */,
