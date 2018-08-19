@@ -15,36 +15,35 @@ class EmployeeDetailsViewController: UIViewController {
     // Resources
     // This offset is used to align all UI from leading and trailing borders on the same distance
     private static let offset: CGFloat = 24.0
-    private static let backgroundColor = #colorLiteral(red: 0.9803921569, green: 0.9764705882, blue: 1, alpha: 1)
 
     // Data
     private let employee: Employee
     weak var contactViewControllerProvider: ContactViewControllerProvider?
 
     // UI
-    private lazy var scrollView: UIScrollView = {
+    private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.backgroundColor = EmployeeDetailsViewController.backgroundColor
+        scrollView.backgroundColor = #colorLiteral(red: 0.9803921569, green: 0.9764705882, blue: 1, alpha: 1)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
 
     // We put all scrollable content in this view
-    private lazy var containerView: UIView = {
+    private let containerView: UIView = {
         let view = UIView()
-        view.backgroundColor = EmployeeDetailsViewController.backgroundColor
+        view.backgroundColor = #colorLiteral(red: 0.9803921569, green: 0.9764705882, blue: 1, alpha: 1)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 
-    private lazy var personImageView: UIImageView = {
+    private let personImageView: UIImageView = {
         let imaveView = UIImageView.init(image: #imageLiteral(resourceName: "PersonIcom"))
         imaveView.contentMode = .scaleAspectFit
         imaveView.translatesAutoresizingMaskIntoConstraints = false
         return imaveView
     }()
 
-    private lazy var personNameLabel: UILabel = {
+    private let personNameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.preferredFont(forTextStyle: .title1)
         label.textColor = .black

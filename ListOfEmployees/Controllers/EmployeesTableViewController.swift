@@ -9,6 +9,9 @@
 import UIKit
 import ContactsUI
 
+/**
+ Protocol provides an ability to open contact card from any other view controller
+ */
 protocol ContactViewControllerProvider: class {
     func openContactViewController(for: Employee)
 }
@@ -32,7 +35,7 @@ class EmployeesTableViewController: UITableViewController {
             }
         }
     }
-    var filteredEmployees: [Employee]
+    fileprivate var filteredEmployees: [Employee]
 
     // UI
     private let searchController: UISearchController
@@ -64,11 +67,10 @@ class EmployeesTableViewController: UITableViewController {
         setupSearchController()
         view.backgroundColor = .white
         NotificationCenter.default.addObserver(self, selector: #selector(employeesListDidChangeExternallyAction), name: .employeesListDidChangeExternally, object: nil)
+
         if employees.count == 0 {
             tableView.backgroundView = PlaceholderView()
         }
-        // White color for searching text in UISearchBar
-        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).defaultTextAttributes = [NSAttributedStringKey.foregroundColor.rawValue: UIColor.white]
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -191,10 +193,13 @@ class EmployeesTableViewController: UITableViewController {
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
+        searchController.definesPresentationContext = true
+
         searchController.searchBar.placeholder = NSLocalizedString("Search employee…", comment: "search placeholder")
         searchController.searchBar.tintColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 1)
         searchController.searchBar.barTintColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
-        searchController.definesPresentationContext = true
+        // White color for searching text in UISearchBar
+        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).defaultTextAttributes = [NSAttributedStringKey.foregroundColor.rawValue: UIColor.white]
     }
 
     private func presentGenericErrorAlert() {
@@ -294,7 +299,7 @@ class EmployeesTableViewController: UITableViewController {
         return searchController.searchBar.text?.isEmpty ?? true
     }
 
-    func isFiltering() -> Bool {
+    private func isFiltering() -> Bool {
         return searchController.isActive && searchBarIsEmpty() == false
     }
 
