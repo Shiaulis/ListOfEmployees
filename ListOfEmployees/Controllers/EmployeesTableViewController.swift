@@ -228,7 +228,7 @@ class EmployeesTableViewController: UITableViewController {
     @objc private func searchButtonAction() {
         navigationItem.searchController = searchController
         navigationItem.searchController?.isActive = true
-        navigationItem.searchController?.hidesNavigationBarDuringPresentation = true
+        navigationItem.searchController?.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.delegate = self
         searchController.delegate = self
     }
