@@ -44,9 +44,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
 
-        // Solution to make white the text inside a seacrh bar
-        // https://stackoverflow.com/questions/46007260/ios-11-customise-search-bar-in-navigation-bar
-        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).defaultTextAttributes = [NSAttributedStringKey.foregroundColor.rawValue: UIColor.white]
         return true
     }
 }

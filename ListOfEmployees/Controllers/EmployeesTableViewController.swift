@@ -67,6 +67,8 @@ class EmployeesTableViewController: UITableViewController {
         if employees.count == 0 {
             tableView.backgroundView = PlaceholderView()
         }
+        // White color for searching text in UISearchBar
+        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).defaultTextAttributes = [NSAttributedStringKey.foregroundColor.rawValue: UIColor.white]
     }
 
     override func viewWillAppear(_ animated: Bool) {
