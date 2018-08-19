@@ -21,13 +21,13 @@ Open **ListOfEmployees.xcodeproj** file.
 Run the app on simulator or if you want to start it on your own device provide your team in project settings.
 
 ### Application architecture
-Application works on MVP (Model-View-Controller) design.
+Application works on MVP (Model-View-Presenter) design pattern.
 There are several model classes which don’t know anything about UI. There are several view controllers that manage the views and provide an interaction between views and model. Views visualize information and provide an interaction with user.
 
 The main model class is **Application Model** class. It initiates all model classes that are needed for app functionality:
-* **RemoteDataFetcher**. This class provides connection to remote server by given set of URLs. This class works on URLSession API and provides all data, responses and errors received from the remote servers. 
-* **DataMapper** provides parsing of the received data and mapping to Employee structure. Also it provides contact identifier for each employee which it finds in the user’s contacts. 
-* **PersistentCacheStorage** saves the data if it is correct and can be parsed by DataMapper and also provides cached data when it is needed. Unlike first two classes it uses protocol with callbacks which notifies Application model of states while working with cache.
+* **RemoteDataFetcher**. This class provides connection to remote server by given set of URLs. This class works on URLSession API and provides all data, responses and errors received from the remote servers. On every remote request Application Model creates separate RemoteDataFetcher class instance. 
+* **DataMapper** provides parsing of the received data and mapping to Employee structure. Also it provides contact identifier for each employee which it finds in the user’s contacts.
+* **PersistentCacheStorage** saves the data if it is correct and can be parsed by DataMapper and also provides cached data when it is needed. Unlike first two classes it works on delegate pattern and notifies Application model about its states by delegate callbacks.
 All data from model is passed to UI by **DataProvider** protocol.
 All model classes work asynchronously on non-main queues to prevent any influence to UI.
 
@@ -50,13 +50,21 @@ Ability to open card from Contacts if it matches.
 - Tapping on contact card in EmployeesListViewController causes opening the contact card. If user changes it somehow we receive a system notification and data from cache will be re-parsed again to update contact cards buttons for employees.
 
 ### Things that also should be done:
+
+* Add unit tests for every model class. They also should use more protocol to have an ability mock every other dependency.
+* Add UI tests to check the controllers.
+* Add more flexible error states handling (throwing more errors, reporting to the user about fault application states like inaccessible cache).
+* Implement some unique identifier for each employee to prevent duplicates (contact with the same ID should be merged)
 * When an error is received from remote server error message should be shown as some popover message instead of alert that prevents user interaction until OK button is tapped.
+
 * The main list while search should present what exactly is found by the given word.
 * Search bar colors should be more close to the application style (white field color with white placeholder)
 * Status bar should adopt its color depending on which controller is shown (for main list and details view it should be white, for contact card - black)
-* Implement some unique identifier for each employee to prevent duplicates (contact with the same ID should be merged)
 * Implement using UITextView instead of UILabel in email value to detect email link and provide an ability for the user to click on it and compose a letter
-* If u open the contact card from the details view and then change the name contact card button will still be accessible on details view. There are several ways to fix it. For example we could subscribe view controller for notifications about external changes in data and ask new data from employees list using some protocol. Another way is to implement some protocol that will provide with information about ability to open contact card for particular employee.  
+* Contacts button in Details View should react on change in user contacts.
+* Check app for accessibility features (color accommodation,  dynamic fonts etc.)
+* Add logs to View Controllers.
+
 
 
 
