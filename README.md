@@ -51,6 +51,7 @@ The main UI class is **EmpoyeesListViewController**. It shows list of employees.
 
 ### Things that also should be done:
 
+* Add several attempts to retry request in RemoteDataFetcher class if it fails for the first time.
 * Add unit tests for every model class. This classes also should use more protocol to have an ability mock each other dependency.
 * Add UI tests to check the controllers.
 * Add more flexible error states handling (throwing more errors, reporting to the user about fault application states like inaccessible cache).
