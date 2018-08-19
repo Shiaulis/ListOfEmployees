@@ -12,7 +12,7 @@
 		0904F20C211DD79B00A7B8B0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0904F20A211DD79B00A7B8B0 /* LaunchScreen.storyboard */; };
 		0904F219211DF05A00A7B8B0 /* ApplicationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F218211DF05A00A7B8B0 /* ApplicationModel.swift */; };
 		0904F21D211DF0EB00A7B8B0 /* DataMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F21C211DF0EB00A7B8B0 /* DataMapper.swift */; };
-		0904F21F211DF1E900A7B8B0 /* RemoteDataFether.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F21E211DF1E900A7B8B0 /* RemoteDataFether.swift */; };
+		0904F21F211DF1E900A7B8B0 /* RemoteRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F21E211DF1E900A7B8B0 /* RemoteRequest.swift */; };
 		0904F221211DF20700A7B8B0 /* Employee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F220211DF20700A7B8B0 /* Employee.swift */; };
 		0904F247211E3A2100A7B8B0 /* PersistentCacheStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F246211E3A2100A7B8B0 /* PersistentCacheStorage.swift */; };
 		0904F249211ECD7600A7B8B0 /* Extentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0904F248211ECD7600A7B8B0 /* Extentions.swift */; };
@@ -33,7 +33,7 @@
 		0904F20D211DD79B00A7B8B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "ListOfEmployees/Supporting Files/Info.plist"; sourceTree = SOURCE_ROOT; };
 		0904F218211DF05A00A7B8B0 /* ApplicationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationModel.swift; sourceTree = "<group>"; };
 		0904F21C211DF0EB00A7B8B0 /* DataMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataMapper.swift; sourceTree = "<group>"; };
-		0904F21E211DF1E900A7B8B0 /* RemoteDataFether.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataFether.swift; sourceTree = "<group>"; };
+		0904F21E211DF1E900A7B8B0 /* RemoteRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteRequest.swift; sourceTree = "<group>"; };
 		0904F220211DF20700A7B8B0 /* Employee.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Employee.swift; sourceTree = "<group>"; };
 		0904F246211E3A2100A7B8B0 /* PersistentCacheStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentCacheStorage.swift; sourceTree = "<group>"; };
 		0904F248211ECD7600A7B8B0 /* Extentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extentions.swift; sourceTree = "<group>"; };
@@ -101,7 +101,7 @@
 				0904F201211DD79A00A7B8B0 /* AppDelegate.swift */,
 				0904F218211DF05A00A7B8B0 /* ApplicationModel.swift */,
 				0904F21C211DF0EB00A7B8B0 /* DataMapper.swift */,
-				0904F21E211DF1E900A7B8B0 /* RemoteDataFether.swift */,
+				0904F21E211DF1E900A7B8B0 /* RemoteRequest.swift */,
 				0904F220211DF20700A7B8B0 /* Employee.swift */,
 				0904F246211E3A2100A7B8B0 /* PersistentCacheStorage.swift */,
 				0904F248211ECD7600A7B8B0 /* Extentions.swift */,
@@ -203,7 +203,7 @@
 				095CCBF421220ECC00006A94 /* PlaceholderView.swift in Sources */,
 				0904F247211E3A2100A7B8B0 /* PersistentCacheStorage.swift in Sources */,
 				0904F219211DF05A00A7B8B0 /* ApplicationModel.swift in Sources */,
-				0904F21F211DF1E900A7B8B0 /* RemoteDataFether.swift in Sources */,
+				0904F21F211DF1E900A7B8B0 /* RemoteRequest.swift in Sources */,
 				093F7F9A211F86FC0047F267 /* EmployeeTableViewCell.swift in Sources */,
 				09C5ECE82120736900BB4FF5 /* EmployeesTableHeaderView.swift in Sources */,
 				0904F202211DD79A00A7B8B0 /* AppDelegate.swift in Sources */,

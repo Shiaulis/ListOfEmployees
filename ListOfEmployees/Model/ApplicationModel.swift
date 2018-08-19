@@ -77,13 +77,13 @@ class ApplicationModel {
     }
 
     func fetchRemoteData(completionHandler: ((Error?) -> Void)?) {
-        var remoteDataFetcher:RemoteDataFetcher? = RemoteDataFetcher()
-        remoteDataFetcher?.fetchRemoteData(fromURLs: self.dataSourceURLs,
+        var remoteRequest:RemoteRequest? = RemoteRequest()
+        remoteRequest?.performRequest(usingURLs: self.dataSourceURLs,
                                            queue: DispatchQueue.global(qos: .userInitiated),
                                            completionHandler: { (dataObjects, responses, errors) in
-            // To capture remoteDataFetcher inside the block we use
-            // its variable inside the block.
-            remoteDataFetcher = nil
+            // To capture remoteRequest inside the block
+            // we use its variable inside the block.
+            remoteRequest = nil
             if errors.count > 0 {
                 for error in errors {
                     os_log("Failed to fetch remote data. Error '%@'",

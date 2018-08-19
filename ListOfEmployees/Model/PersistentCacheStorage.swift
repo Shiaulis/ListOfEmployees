@@ -1,5 +1,5 @@
 //
-//  PersistentStorage.swift
+//  PersistentCacheStorage.swift
 //  ListOfEmployees
 //
 //  Created by Andrius Shiaulis on 11.08.2018.

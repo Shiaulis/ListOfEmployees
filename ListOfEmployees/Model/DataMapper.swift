@@ -1,5 +1,5 @@
 //
-//  JsonParser.swift
+//  DataMapper.swift
 //  ListOfEmployees
 //
 //  Created by Andrius Shiaulis on 10.08.2018.

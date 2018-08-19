@@ -1,5 +1,5 @@
 //
-//  RemoteDataFether.swift
+//  RemoteRequest.swift
 //  ListOfEmployees
 //
 //  Created by Andrius Shiaulis on 10.08.2018.
@@ -9,11 +9,11 @@
 import Foundation
 import os.log
 
-class RemoteDataFetcher {
+class RemoteRequest {
 
     // MARK: - Properties -
 
-    static private let logger = OSLog.init(subsystem: LogSubsystem.applicationModel, object: RemoteDataFetcher.self)
+    static private let logger = OSLog.init(subsystem: LogSubsystem.applicationModel, object: RemoteRequest.self)
     private var dataObjects: [Data]
     private var responses: [URLResponse]
     private var errors: [Error]
@@ -28,7 +28,7 @@ class RemoteDataFetcher {
 
     // MARK: - Public methods
 
-    func fetchRemoteData(fromURLs urls:[URL], queue:DispatchQueue, completionHandler:@escaping ([Data], [URLResponse], [Error]) -> Void) {
+    func performRequest(usingURLs urls:[URL], queue:DispatchQueue, completionHandler:@escaping ([Data], [URLResponse], [Error]) -> Void) {
         queue.async { [weak self] in
             guard let strongSelf = self else {
                 assertionFailure()
@@ -40,7 +40,7 @@ class RemoteDataFetcher {
             let group = DispatchGroup.init()
             for url in urls {
                 group.enter()
-                os_log("Data fetch request started for URL '%@'", log: RemoteDataFetcher.logger, type: .debug, url.absoluteString)
+                os_log("Data fetch request started for URL '%@'", log: RemoteRequest.logger, type: .debug, url.absoluteString)
                 urlSession.dataTask(with: url, completionHandler: { [weak self] (data, response, error) in
                     self?.handleNetworkResponse(data: data, response: response, error: error, dispatchGroup: group, queue: queue)
                 }).resume()
@@ -63,7 +63,7 @@ class RemoteDataFetcher {
 
             if let error = error {
                 os_log("Data fetch request for URL '%@' finished with error %@",
-                       log: RemoteDataFetcher.logger,
+                       log: RemoteRequest.logger,
                        type: .debug,
                        response?.url?.path ?? "", error.localizedDescription)
                 strongSelf.errors.append(error)
@@ -85,7 +85,7 @@ class RemoteDataFetcher {
             }
 
             os_log("Data fetch request for URL '%@' finished successfully",
-                   log: RemoteDataFetcher.logger,
+                   log: RemoteRequest.logger,
                    type: .debug,
                    response.url?.absoluteString ?? "")
 
