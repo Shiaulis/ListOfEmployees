@@ -54,16 +54,18 @@ The main UI class is **EmpoyeesListViewController**. It shows list of employees.
 * Add unit tests for every model class. This classes also should use more protocol to have an ability mock each other dependency.
 * Add UI tests to check the controllers.
 * Add more flexible error states handling (throwing more errors, reporting to the user about fault application states like inaccessible cache).
-* Implement some unique identifier for each employee to prevent duplicates (contact with the same ID should be merged)
+* Implement some unique identifier for each employee to prevent duplicates (contact with the same ID should be merged).
 * When an error is received from remote server error message should be shown as some popover message instead of alert that prevents user interaction until OK button is tapped.
 
 * The main list while search should present what exactly is found by the given word.
-* Search bar colors should be more close to the application style (white field color with white placeholder)
-* Status bar should adopt its color depending on which controller is shown (for main list and details view it should be white, for contact card - black)
-* Implement using UITextView instead of UILabel in email value to detect email link and provide an ability for the user to click on it and compose a letter
+* Search bar colors should be more close to the application style (white field color with white placeholder).
+* Status bar should adopt its color depending on which controller is shown (for main list and details view it should be white, for contact card - black).
+* Implement using UITextView instead of UILabel in email value to detect email link and provide an ability for the user to click on it and compose a letter.
 * Contacts button in Details View should react on change in user contacts.
-* Check app for accessibility features (color accommodation,  dynamic fonts etc.)
+* Check app for accessibility features (color accommodation,  dynamic fonts etc.).
 * Add logs to View Controllers.
+* Localize app
+* Provide localized copy for info.plist
 
 
 ## License
