@@ -35,6 +35,14 @@ class EmployeesTableViewController: UITableViewController {
             }
         }
     }
+    private var searchBarIsEmpty: Bool {
+        return searchController.searchBar.text?.isEmpty ?? true
+    }
+
+    private var isFiltering: Bool {
+        return searchController.isActive && searchBarIsEmpty == false
+    }
+
     private var filteredEmployees: [Employee]
 
     // UI
@@ -83,14 +91,14 @@ class EmployeesTableViewController: UITableViewController {
     // MARK: - Table view data source -
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        if isFiltering() {
+        if isFiltering {
             return 1
         }
         return employees.keys.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isFiltering() {
+        if isFiltering {
             return filteredEmployees.count
         }
         return employeesArray(forSection: section)?.count ?? 0
@@ -130,7 +138,7 @@ class EmployeesTableViewController: UITableViewController {
             return nil
         }
 
-        if searchBarIsEmpty() == false {
+        if searchBarIsEmpty == false {
             let foundEmployeesCount = filteredEmployees.count
             let title: String
             if foundEmployeesCount == 1 {
@@ -264,7 +272,7 @@ class EmployeesTableViewController: UITableViewController {
 
     private func employeesArray(forSection section: Int) -> [Employee]? {
 
-        if isFiltering() {
+        if isFiltering {
             return filteredEmployees
         }
 
@@ -293,15 +301,6 @@ class EmployeesTableViewController: UITableViewController {
     }
 
     // Search related methods
-
-    private func searchBarIsEmpty() -> Bool {
-        // Returns true if the text is empty or nil
-        return searchController.searchBar.text?.isEmpty ?? true
-    }
-
-    private func isFiltering() -> Bool {
-        return searchController.isActive && searchBarIsEmpty() == false
-    }
 
     private func filterContentForSearchText(_ searchText: String, scope: String = "All") {
         filteredEmployees = dataProvider.searchForEmployees(usingText: searchText)
