@@ -26,7 +26,7 @@ class EmployeesTableViewController: UITableViewController {
     // Data
     private let dataProvider: DataProvider
     private weak var contactViewControllerProvider: ContactViewControllerProvider?
-    fileprivate var employees: [EmployeePosition:[Employee]] {
+    private var employees: [EmployeePosition:[Employee]] {
         didSet {
             if employees.count > 0 {
                 DispatchQueue.main.async { [weak self] in
@@ -35,7 +35,7 @@ class EmployeesTableViewController: UITableViewController {
             }
         }
     }
-    fileprivate var filteredEmployees: [Employee]
+    private var filteredEmployees: [Employee]
 
     // UI
     private let searchController: UISearchController

@@ -40,10 +40,10 @@ class ApplicationModel {
     private let persistentCacheStorage: PersistentCacheStorage?
     private let dataMapper: DataMapper
     private var contactsStore: CNContactStore?
-    fileprivate let employeesReadWriteQueue: DispatchQueue
+    private let employeesReadWriteQueue: DispatchQueue
     // Data
     private let dataSourceURLs: [URL]
-    fileprivate var employeesSortedArray: [Employee]
+    private var employeesSortedArray: [Employee]
 
     // MARK: - Initialization -
 
